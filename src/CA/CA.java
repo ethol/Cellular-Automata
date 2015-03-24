@@ -13,7 +13,7 @@ public class CA {
 		this.dimentions = dimentions;
 		this.boardSize = boardSize;
 		this.numOfStates = numOfStates;
-		this.out = new CAOutputWriter(dimentions, boardSize);
+		this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
 		if(dimentions == 1){
 			board = new int [boardSize][1];
 			boardNext = new int [boardSize][1];
@@ -31,7 +31,7 @@ public class CA {
 		}else{
 			rules = new int[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates];
 		}
-		//setRulesElementary(110);
+//		setRulesElementary(110);
 		setRandomRules();
 		start(numofRuns);
 
@@ -108,6 +108,7 @@ public class CA {
 	}
 
 	public void start(int num){
+		out.writeBlock(board);
 		printBoard();
 		int l,r,c,u=0,d=0;
 		for (int k = 0; k < num; k++) {

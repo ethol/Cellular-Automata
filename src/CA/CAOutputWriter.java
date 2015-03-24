@@ -10,7 +10,7 @@ public class CAOutputWriter {
 	private String outputFile ="test.txt";
 	private PrintWriter writer;
 
-	public CAOutputWriter (int dimentions, int boardSize){
+	public CAOutputWriter (int dimentions, int boardSize, int numOfStates){
 		//System.out.println("writing to : " + outputFolder+outputFile);
 
 
@@ -18,7 +18,7 @@ public class CAOutputWriter {
 
 		try {
 			writer = new PrintWriter(outputFolder + outputFile, "UTF-8");
-			writer.println(dimentions + ":" + boardSize);
+			writer.println(dimentions + ":" + boardSize + ":" + numOfStates);
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
