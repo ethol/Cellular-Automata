@@ -1,11 +1,13 @@
+package CA;
 
 public class CA {
-	int dimentions; 
-	int boardSize;
-	int numOfStates;
-	int [][] board;
-	int [][] boardNext;
-	int [][][][][] rules; // L,C,R,U,D;
+	private int dimentions; 
+	private int boardSize;
+	private int numOfStates;
+	private int [][] board;
+	private int [][] boardNext;
+	private int [][][][][] rules; // L,C,R,U,D;
+	private String outputFolder = "\\output"; 
 
 	public CA(int dimentions, int boardSize, int numOfStates, boolean ran, int numofRuns) {
 		this.dimentions = dimentions;
@@ -14,7 +16,7 @@ public class CA {
 		if(dimentions == 1){
 			board = new int [boardSize][1];
 			boardNext = new int [boardSize][1];
-			
+
 		}else{
 			board = new int [boardSize][boardSize];
 			boardNext = new int [boardSize][boardSize];
@@ -29,9 +31,10 @@ public class CA {
 		}else{
 			rules = new int[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates];
 		}
-		setRulesElementary(90);
+		//setRulesElementary(90);
+		setRandomRules();
 		start(numofRuns);
-	
+
 	}
 
 	private void setRulesElementary(int rule){
@@ -47,6 +50,31 @@ public class CA {
 		rules[1][0][1][0][0] = bin.charAt(2)-48;
 		rules[1][1][0][0][0] = bin.charAt(1)-48;
 		rules[1][1][1][0][0] = bin.charAt(0)-48;
+
+	}
+
+
+	private void setRandomRules(){
+		for (int i = 0; i < rules.length; i++) {
+			for (int j = 0; j < rules[0].length; j++) {
+				for (int j2 = 0; j2 < rules[0][0].length; j2++) {
+					for (int k = 0; k < rules[0][0][0].length; k++) {
+						for (int k2 = 0; k2 < rules[0][0][0][0].length; k2++) {
+							rules[i][j][j2][k][k2] = (int) (Math.random()*numOfStates);
+							/*
+							System.out.print("i:" + i);
+							System.out.print("j:" + j);
+							System.out.print("j2:" + j2);
+							System.out.print("k:" + k);
+							System.out.print("k2:" + k2);
+							System.out.print(" value:" + rules[i][j][j2][k][k2]);
+							System.out.println();/**/
+						}
+					}
+				}
+			}
+		}
+
 
 	}
 
@@ -81,16 +109,21 @@ public class CA {
 
 	public void start(int num){
 		printBoard();
-		int l,r,c;
+		int l,r,c,u=0,d=0;
 		for (int k = 0; k < num; k++) {
 			for (int i = 0; i < board[0].length; i++) {
 				for (int j = 0; j < board.length; j++) {
 					l= board[(j+boardSize-1)%boardSize][i];
 					c=board[j][i];
 					r= board[(j+1)%boardSize][i];
+					if(dimentions!=1){
+					u = board[j][(i-1+boardSize)%boardSize];
+					d = board[j][(i+1)%boardSize];
+					}
+				
 					//System.out.println("l=" + l + " c=" + c + " r=" + r);
-				//System.out.println("c-1: "+ j +"  = " + (j+boardSize-1)%boardSize);
-					boardNext[j][i] = rules[l][c][r][0][0];
+					//System.out.println("c-1: "+ j +"  = " + (j+boardSize-1)%boardSize);
+					boardNext[j][i] = rules[l][c][r][u][d];
 
 				}
 			}
@@ -103,7 +136,7 @@ public class CA {
 			for (int j = 0; j < newBoard.length; j++) {
 				board[j][i] = newBoard[j][i];
 			}
-			
+
 		}
 	}
 
