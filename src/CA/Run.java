@@ -6,7 +6,7 @@ public class Run {
 	
 	public static void main(String[] args) {
 		/*  Initialize variables */ 
-		int dimentions = 1; 
+		int dimentions = 2; 
 		int boardSize = 9;
 		int numOfStates = 2;
 		int numberOfRuns = 20;

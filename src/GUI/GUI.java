@@ -1,4 +1,4 @@
-package CA;
+package GUI;
 import javax.swing.*;
 
 

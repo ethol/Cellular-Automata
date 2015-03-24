@@ -7,16 +7,16 @@ public class CA {
 	private int [][] board;
 	private int [][] boardNext;
 	private int [][][][][] rules; // L,C,R,U,D;
-	private String outputFolder = "\\output"; 
+	private CAOutputWriter out;
 
 	public CA(int dimentions, int boardSize, int numOfStates, boolean ran, int numofRuns) {
 		this.dimentions = dimentions;
 		this.boardSize = boardSize;
 		this.numOfStates = numOfStates;
+		this.out = new CAOutputWriter(dimentions, boardSize);
 		if(dimentions == 1){
 			board = new int [boardSize][1];
 			boardNext = new int [boardSize][1];
-
 		}else{
 			board = new int [boardSize][boardSize];
 			boardNext = new int [boardSize][boardSize];
@@ -31,7 +31,7 @@ public class CA {
 		}else{
 			rules = new int[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates];
 		}
-		//setRulesElementary(90);
+		//setRulesElementary(110);
 		setRandomRules();
 		start(numofRuns);
 
@@ -129,7 +129,9 @@ public class CA {
 			}
 			setBoard(boardNext);
 			printBoard();
+			out.writeBlock(board);
 		}
+		out.close();
 	}
 	public void setBoard(int[][] newBoard){
 		for (int i = 0; i < newBoard[0].length; i++) {
@@ -139,5 +141,7 @@ public class CA {
 
 		}
 	}
+
+	
 
 }
