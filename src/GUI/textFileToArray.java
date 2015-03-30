@@ -60,9 +60,9 @@ public class textFileToArray {
 	}
 	public static void main(String[] args) {
 		ArrayList<int[][]> test = textFileToArray.getArray("src\\CA\\output\\test.txt");
-		
+		int boardSize = test.get(0).length;
 	
-		GUI gui = new GUI(19, 19, test);
+		GUI gui = new GUI(boardSize, boardSize, test);
 		
 		gui.pack();
 		gui.setVisible(true);
