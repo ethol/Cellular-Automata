@@ -26,27 +26,36 @@ public class textFileToArray {
 			String [] lineSp; 
 			while (line != null) {
 				lineSp = line.split(" "); 
-			    if(dimentions==1){
-		        	temp = new int[boardSize][1];
-		        	for (int i = 0; i < lineSp.length; i++) {
+				if(dimentions==1){
+					temp = new int[boardSize][1];
+					for (int i = 0; i < lineSp.length; i++) {
 						temp[i][0] = Integer.parseInt(lineSp[i]);
 					}
-		        	
-		        }else{
-		        	temp = new int[boardSize][boardSize];
-		        	for (int i = 0; i < lineSp.length; i++) {
-		        		temp[i%boardSize][i/boardSize] = Integer.parseInt(lineSp[i]);
-		        	}
-		        	
-		        }
-			    
-			    list.add(temp);
+
+				}else{
+					temp = new int[boardSize][boardSize];
+					for (int i = 0; i < lineSp.length; i++) {
+						temp[i/boardSize][i%boardSize] = Integer.parseInt(lineSp[i]);
+					}
+
+				}
+
+				list.add(temp);
 				line = br.readLine();
-				
-			
+
+
 
 
 			}
+
+//			if(dimentions==1){
+//				temp = new int[list.size()][boardSize];
+//				for (int i = 0; i < list.size(); i++) {
+//					temp[i]=list.get(i)[0];
+//				}
+//				list = new ArrayList<int[][]>();
+//				list.add(temp);
+//			}
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -61,14 +70,15 @@ public class textFileToArray {
 	public static void main(String[] args) {
 		ArrayList<int[][]> test = textFileToArray.getArray("src\\CA\\output\\test.txt");
 		int boardSize = test.get(0).length;
-	
-		GUI gui = new GUI(boardSize, boardSize, test);
-		
+		int boardSize2 = test.get(0)[0].length;
+
+		GUI gui = new GUI(boardSize, boardSize2, test);
+
 		gui.pack();
 		gui.setVisible(true);
 		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
+
+
 	}
 
 }

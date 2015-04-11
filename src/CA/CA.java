@@ -38,7 +38,6 @@ public class CA {
 		}else {
 			rules = new int[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates];
 		}
-		//		setRulesElementary(110);
 		setRandomRules();
 
 
@@ -49,6 +48,9 @@ public class CA {
 		this(dimentions,boardSize,numOfStates,ran);
 		start(numofRuns);
 
+	}
+	public void setRules(int [][][][][][][][][] rules){
+		this.rules = rules;
 	}
 
 	public void setRulesElementary(int rule){
@@ -65,6 +67,18 @@ public class CA {
 		rules[1][1][0][0][0][0][0][0][0] = bin.charAt(1)-48;
 		rules[1][1][1][0][0][0][0][0][0] = bin.charAt(0)-48;
 
+	}
+	public void resetBoard(){
+		if(dimentions == 1){
+			board = new int [boardSize][1];
+			boardNext = new int [boardSize][1];
+		}else{
+			board = new int [boardSize][boardSize];
+			boardNext = new int [boardSize][boardSize];
+		}
+		
+		board[(board.length/2)][board[0].length/2] = 1;
+		this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
 	}
 	public void setGameOfLife(){
 		if(dimentions==2){
@@ -93,7 +107,7 @@ public class CA {
 												}else{
 													rules[i][j][j2][k][k2][l][l2][m][m2] = 0;
 												}
-												//								/*
+												/*
 												System.out.print("i:" + i);
 												System.out.print("j:" + j);
 												System.out.print("j2:" + j2);
@@ -125,14 +139,18 @@ public class CA {
 	}
 
 
-	private void setRandomRules(){
+	public void setRandomRules(){
 		for (int i = 0; i < rules.length; i++) {
 			for (int j = 0; j < rules[0].length; j++) {
 				for (int j2 = 0; j2 < rules[0][0].length; j2++) {
 					for (int k = 0; k < rules[0][0][0].length; k++) {
 						for (int k2 = 0; k2 < rules[0][0][0][0].length; k2++) {
-							rules[i][j][j2][k][k2][0][0][0][0] = (int) (Math.random()*numOfStates);
-							/*
+							for (int l = 0; l < rules[0][0][0][0][0].length; l++) {
+								for (int l2 = 0; l2 < rules[0][0][0][0][0][0].length; l2++) {
+									for (int m = 0; m < rules[0][0][0][0][0][0][0].length; m++) {
+										for (int m2 = 0; m2 < rules[0][0][0][0][0][0][0][0].length; m2++) {
+											rules[i][j][j2][k][k2][l][l2][m][m2] = (int) (Math.random()*numOfStates);
+											/*
 							System.out.print("i:" + i);
 							System.out.print("j:" + j);
 							System.out.print("j2:" + j2);
@@ -140,16 +158,56 @@ public class CA {
 							System.out.print("k2:" + k2);
 							System.out.print(" value:" + rules[i][j][j2][k][k2]);
 							System.out.println();/**/
+										}
+									}
+								}
+							}
 						}
 					}
 				}
 			}
 		}
 
-
+	}
+	public int[][][][][][][][][] cloneRules() {
+		
+		int[][][][][][][][][] retur = new int [rules.length][rules[0].length][rules[0][0].length][rules[0][0][0].length]
+				[rules[0][0][0][0].length][rules[0][0][0][0][0].length][rules[0][0][0][0][0][0].length][rules[0][0][0][0][0][0][0].length][rules[0][0][0][0][0][0][0][0].length];
+		
+		for (int i = 0; i < rules.length; i++) {
+			for (int j = 0; j < rules[0].length; j++) {
+				for (int j2 = 0; j2 < rules[0][0].length; j2++) {
+					for (int k = 0; k < rules[0][0][0].length; k++) {
+						for (int k2 = 0; k2 < rules[0][0][0][0].length; k2++) {
+							for (int l = 0; l < rules[0][0][0][0][0].length; l++) {
+								for (int l2 = 0; l2 < rules[0][0][0][0][0][0].length; l2++) {
+									for (int m = 0; m < rules[0][0][0][0][0][0][0].length; m++) {
+										for (int m2 = 0; m2 < rules[0][0][0][0][0][0][0][0].length; m2++) {
+											retur[i][j][j2][k][k2][l][l2][m][m2] = rules[i][j][j2][k][k2][l][l2][m][m2];
+											/*
+							System.out.print("i:" + i);
+							System.out.print("j:" + j);
+							System.out.print("j2:" + j2);
+							System.out.print("k:" + k);
+							System.out.print("k2:" + k2);
+							System.out.print(" value:" + rules[i][j][j2][k][k2]);
+							System.out.println();/**/
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		
+		return retur;
 	}
 
-	private void randomInitialisation(){
+	public void randomInitialisation(){
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[0].length; j++) {
 				board[i][j] = (int) (Math.random()*numOfStates);
@@ -180,7 +238,7 @@ public class CA {
 
 	public void start(int num){
 		out.writeBlock(board);
-		printBoard();
+	//	printBoard();
 		int l,r,c,u=0,d=0,ul=0,ur=0,dl=0,dr=0;
 		for (int k = 0; k < num; k++) {
 			for (int i = 0; i < board[0].length; i++) {
@@ -191,12 +249,12 @@ public class CA {
 					if(dimentions!=1){
 						u = board[j][(i-1+boardSize)%boardSize];
 						d = board[j][(i+1)%boardSize];
-					}
-					if(!vonNaumanNeighbourhood){
-						ul = board[(j+boardSize-1)%boardSize][(i-1+boardSize)%boardSize];
-						ur = board[(j+1)%boardSize][(i-1+boardSize)%boardSize];
-						dl = board[(j+boardSize-1)%boardSize][(i+1)%boardSize];
-						dr = board[(j+1)%boardSize][(i+1)%boardSize];
+						if(!vonNaumanNeighbourhood){
+							ul = board[(j+boardSize-1)%boardSize][(i-1+boardSize)%boardSize];
+							ur = board[(j+1)%boardSize][(i-1+boardSize)%boardSize];
+							dl = board[(j+boardSize-1)%boardSize][(i+1)%boardSize];
+							dr = board[(j+1)%boardSize][(i+1)%boardSize];
+						}
 					}
 
 					//System.out.println("l=" + l + " c=" + c + " r=" + r);
@@ -206,7 +264,7 @@ public class CA {
 				}
 			}
 			setBoard(boardNext);
-			printBoard();
+		//	printBoard();
 			out.writeBlock(board);
 		}
 		out.close();
@@ -218,6 +276,9 @@ public class CA {
 			}
 
 		}
+	}
+	public int [][] getBoard(){
+		return board;
 	}
 
 

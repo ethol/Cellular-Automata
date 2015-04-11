@@ -5,6 +5,9 @@ public class Run {
 	
 	
 	public static void main(String[] args) {
+		/*
+		 * glidergun in a size 41 square CA
+		 */
 		int[][]gliderGun = new int[][]{
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -60,6 +63,7 @@ public class Run {
 		boolean randomStart = false;
 		
 		CA ca = new CA(dimentions, boardSize, numOfStates, randomStart);
+//		ca.setRandomRules();
 		ca.setGameOfLife();
 		ca.setBoard(gliderGun);
 		ca.start(numberOfRuns);
