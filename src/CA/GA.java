@@ -6,49 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public class GA {
-	public class ruleModel implements Comparable {
-		public int[][][][][][][][][] rules;
-		public double fitnessValue= 0.0;
-		public ruleModel(int[][][][][][][][][] rules){
-			this.rules = rules;
-		}
-		@Override
-		public int compareTo(Object ruleModel) {
-			return (int) (((ruleModel)ruleModel).fitnessValue - this.fitnessValue);
-		}
-		public String toString(){
-			return rulesToBinary() +" : " + fitnessValue + "";
-		}
-
-		public String rulesToBinary(){
-			String results = "";
-			for (int i = 0; i < rules.length; i++) {
-				for (int j = 0; j < rules[0].length; j++) {
-					for (int j2 = 0; j2 < rules[0][0].length; j2++) {
-						for (int k = 0; k < rules[0][0][0].length; k++) {
-							for (int k2 = 0; k2 < rules[0][0][0][0].length; k2++) {
-								for (int l = 0; l < rules[0][0][0][0][0].length; l++) {
-									for (int l2 = 0; l2 < rules[0][0][0][0][0][0].length; l2++) {
-										for (int m = 0; m < rules[0][0][0][0][0][0][0].length; m++) {
-											for (int m2 = 0; m2 < rules[0][0][0][0][0][0][0][0].length; m2++) {
-
-												results = results+ rules[i][j][j2][k][k2][l][l2][m][m2];
-
-											}
-
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			return results;
-		}
-
-
-	}
+	
 
 	private int popSize;
 	private int maxIterations;
@@ -57,7 +15,7 @@ public class GA {
 	private int numOfStates;
 	boolean elitism = false;
 	CA generator;
-	ArrayList<ruleModel> population;
+	ArrayList<RuleModel> population;
 
 	public GA(int popSize, int maxIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism) {
@@ -67,14 +25,14 @@ public class GA {
 		this.boardSize = boardSize;
 		this.numOfStates = numOfStates;
 		this.elitism = elitism;
-		population = new ArrayList<ruleModel>();
+		population = new ArrayList<RuleModel>();
 
 		generator = new CA(dimentions, boardSize, numOfStates, false);
-		ruleModel max = new ruleModel((generator.cloneRules()));
+		RuleModel max = new RuleModel((generator.cloneRules()));
 		for (int i = 0; i < popSize; i++) {
 			generator.setRandomRules();
-			ruleModel rm = new ruleModel(generator.cloneRules());
-			System.out.println(rm);
+			RuleModel rm = new RuleModel(generator.cloneRules());
+//			System.out.println(rm);
 			rm.fitnessValue = fitnessFunction(rm.rules);
 			population.add(rm);
 			if(rm.fitnessValue>max.fitnessValue)
@@ -140,12 +98,12 @@ public class GA {
 
 
 	private void iterateGeneration(){
-		for (int i = 0; i < popSize; i++) {
-			System.out.println(population.get(i));
-		}
+//		for (int i = 0; i < popSize; i++) {
+//			System.out.println(population.get(i));
+//		}
 		
-		ArrayList<ruleModel> nextGen = new ArrayList<ruleModel>();
-		ArrayList<ruleModel> breeders = new ArrayList<ruleModel>();
+		ArrayList<RuleModel> nextGen = new ArrayList<RuleModel>();
+		ArrayList<RuleModel> breeders = new ArrayList<RuleModel>();
 		Collections.sort(population);
 
 		/*
@@ -187,9 +145,6 @@ public class GA {
 		 * crossover 
 		 */
 		
-		for (int i = 0; i < popSize*2; i++) {
-			System.out.println(breeders.get(i));
-		}
 	
 		for (int i = 0; i < popSize*2; i+=2) {
 			nextGen.add(crossover(breeders.get(i), breeders.get(i+1)));
@@ -202,7 +157,13 @@ public class GA {
 		/*
 		 * muation
 		 */
+		for (int i = 0; i < nextGen.size(); i++) {
+			System.out.println("before " + nextGen.get(i));
+			generator.setRules(nextGen.get(i).rulesToBinary());
+			nextGen.get(i).rules = generator.getRules();
+			System.out.println("after " + nextGen.get(i));
 
+		}
 
 		/*
 		 * replacing
@@ -215,8 +176,13 @@ public class GA {
 	 * @param mom
 	 * @return
 	 */
+	
+	
+	/*
+	 * take care not to crossover to much, though random position of crossing is good, to many crossings might be a bad thing.
+	 */
 
-	private ruleModel crossover(ruleModel dad, ruleModel mom){
+	private RuleModel crossover(RuleModel dad, RuleModel mom){
 
 
 		int[][][][][][][][][] rules =generator.cloneRules();//will be overwritten
@@ -259,7 +225,7 @@ public class GA {
 				}
 			}
 		}
-		ruleModel rm = new ruleModel(rules);
+		RuleModel rm = new RuleModel(rules);
 //		System.out.println(rm.rulesToBinary());
 
 		return rm;

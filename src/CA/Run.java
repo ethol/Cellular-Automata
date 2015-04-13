@@ -1,5 +1,6 @@
 package CA;
 
+
 public class Run {
 
 	
@@ -60,12 +61,17 @@ public class Run {
 		int boardSize = 41;
 		int numOfStates = 2;
 		int numberOfRuns = 900;
-		boolean randomStart = false;
+		boolean randomStart = true;
 		
 		CA ca = new CA(dimentions, boardSize, numOfStates, randomStart);
 //		ca.setRandomRules();
 		ca.setGameOfLife();
-		ca.setBoard(gliderGun);
+//		ca.setBoard(gliderGun);
+		RuleModel rm = new RuleModel(ca.getRules());
+		System.out.println(rm);
+		ca.setRules(rm.rulesToBinary());
+		rm = new RuleModel(ca.getRules());
+		System.out.println(rm);
 		ca.start(numberOfRuns);
 		
 

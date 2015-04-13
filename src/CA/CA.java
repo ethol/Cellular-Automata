@@ -53,6 +53,79 @@ public class CA {
 		this.rules = rules;
 	}
 
+	/* why would i need to comment this it makes total sense...
+	 *  ok ok, I know
+	 *  because of the idiot also known as pastMyself i have to convert a binary to decimal string into a 9 dimensional array. so b is the most significant bit value. one needs to go through the array from that as a
+	 *  starting point. 
+	 *  
+	 *  if you feel you understand what I've done and why, contact your nearest psychiatrist immediately.
+	 */
+	public void setRules(String rules){
+		int b = (int) Math.pow(numOfStates, 2);
+		if(dimentions==2){
+			b=(int) Math.pow(numOfStates, 4);
+		}
+		if(!vonNaumanNeighbourhood){
+			b = (int) Math.pow(numOfStates, 8);
+		}
+
+		//		for (int i = 0; i < this.rules.length; i++) {
+		//			for (int j = 0; j < this.rules[0].length; j++) {
+		//				for (int j2 = 0; j2 < this.rules[0][0].length; j2++) {
+		//					for (int k = 0; k < this.rules[0][0][0].length; k++) {
+		//						for (int k2 = 0; k2 < this.rules[0][0][0][0].length; k2++) {
+		//							for (int l = 0; l < this.rules[0][0][0][0][0].length; l++) {
+		//								for (int l2 = 0; l2 < this.rules[0][0][0][0][0][0].length; l2++) {
+		//									for (int m = 0; m < this.rules[0][0][0][0][0][0][0].length; m++) {
+		//										for (int m2 = 0; m2 < this.rules[0][0][0][0][0][0][0][0].length; m2++) {
+		//											this.rules[i][j][j2][k][k2][l][l2][m][m2] = rules.charAt(i*b+j*b/2+j2*b/4+k*8+k2*b/8+l*b/16+l2*b/32 +m*b/64+m2*b/128)-48;
+		//
+		//										}
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+		//			}
+		//		}
+		int k, k1, k2,k3=0,k4=0,k5=0,k6=0,k7=0,k8=0, k9=0;
+		for (int i = 0; i < rules.length(); i++) {
+			k= i;
+			k1 = k/b;
+			k-= b*k1;
+			k2 = (k/(b/numOfStates));
+			k-= (b/numOfStates)*k2;
+			k3 = (k/(b/(int)Math.pow(numOfStates, 2)));
+			k-= (b/(int)Math.pow(numOfStates, 2))*k3;
+			if((b/(int)Math.pow(numOfStates, 3)!=0)){
+				k4 = (k/(b/(int)Math.pow(numOfStates, 3)));
+				k-= (b/(int)Math.pow(numOfStates, 3))*k4;
+				k5 = (k/(b/(int)Math.pow(numOfStates, 4)));
+				k-= (b/(int)Math.pow(numOfStates, 4))*k5;
+				if((b/(int)Math.pow(numOfStates, 5))!=0){
+					k6 = (k/(b/(int)Math.pow(numOfStates, 5)));
+					k-= (b/(int)Math.pow(numOfStates, 5))*k6;
+					k7 = (k/(b/(int)Math.pow(numOfStates, 6)));
+					k-= (b/(int)Math.pow(numOfStates, 6))*k7;
+					k8 = (k/(b/(int)Math.pow(numOfStates, 7)));
+					k-= (b/(int)Math.pow(numOfStates, 7))*k8;
+					k9 = (k/(b/(int)Math.pow(numOfStates, 8)));
+					k-= (b/(int)Math.pow(numOfStates, 8))*k9;
+				}
+			}
+//			System.out.println(Integer.toBinaryString(i));
+//			System.out.println(""+k1+k2+k3+k4+k5+k6+k7+k8+k9);
+						this.rules[k1][k2][k3][k4][k5][k6][k7][k8][k9] = rules.charAt(i)-48;
+		}
+
+
+	}
+
+	public int [][][][][][][][][]  getRules(){
+		return this.rules;
+	}
+
 	public void setRulesElementary(int rule){
 		String bin = Integer.toBinaryString(rule);
 		for (int i = bin.length(); i < 8; i++) {
@@ -76,11 +149,12 @@ public class CA {
 			board = new int [boardSize][boardSize];
 			boardNext = new int [boardSize][boardSize];
 		}
-		
+
 		board[(board.length/2)][board[0].length/2] = 1;
 		this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
 	}
 	public void setGameOfLife(){
+		vonNaumanNeighbourhood = false;
 		if(dimentions==2){
 			for (int i = 0; i < rules.length; i++) {
 				for (int j = 0; j < rules[0].length; j++) {
@@ -94,15 +168,15 @@ public class CA {
 
 												if(j==1&&(i+j2+k+k2+l+l2+m+m2)<2){
 													rules[i][j][j2][k][k2][l][l2][m][m2] = 0;
-													System.out.print("rule 1: ");
+													//													System.out.print("rule 1: ");
 												}else if(j==1&&((i+j2+k+k2+l+l2+m+m2)==2||(i+j2+k+k2+l+l2+m+m2)==3)){
-													System.out.print("rule 2: ");
+													//													System.out.print("rule 2: ");
 													rules[i][j][j2][k][k2][l][l2][m][m2] = 1;
 												}else if(j==1&&((i+j2+k+k2+l+l2+m+m2)>3)){
-													System.out.print("rule 3: ");
+													//													System.out.print("rule 3: ");
 													rules[i][j][j2][k][k2][l][l2][m][m2] = 0;
 												}else if((j==0&&((i+j2+k+k2+l+l2+m+m2)==3))){
-													System.out.print("rule 4: ");
+													//													System.out.print("rule 4: ");
 													rules[i][j][j2][k][k2][l][l2][m][m2] = 1;
 												}else{
 													rules[i][j][j2][k][k2][l][l2][m][m2] = 0;
@@ -169,11 +243,14 @@ public class CA {
 		}
 
 	}
+	/*
+	 * incase you ever wonder if you are insane
+	 */
 	public int[][][][][][][][][] cloneRules() {
-		
+
 		int[][][][][][][][][] retur = new int [rules.length][rules[0].length][rules[0][0].length][rules[0][0][0].length]
 				[rules[0][0][0][0].length][rules[0][0][0][0][0].length][rules[0][0][0][0][0][0].length][rules[0][0][0][0][0][0][0].length][rules[0][0][0][0][0][0][0][0].length];
-		
+
 		for (int i = 0; i < rules.length; i++) {
 			for (int j = 0; j < rules[0].length; j++) {
 				for (int j2 = 0; j2 < rules[0][0].length; j2++) {
@@ -201,9 +278,9 @@ public class CA {
 				}
 			}
 		}
-		
-		
-		
+
+
+
 		return retur;
 	}
 
@@ -238,7 +315,7 @@ public class CA {
 
 	public void start(int num){
 		out.writeBlock(board);
-	//	printBoard();
+		//	printBoard();
 		int l,r,c,u=0,d=0,ul=0,ur=0,dl=0,dr=0;
 		for (int k = 0; k < num; k++) {
 			for (int i = 0; i < board[0].length; i++) {
@@ -264,7 +341,7 @@ public class CA {
 				}
 			}
 			setBoard(boardNext);
-		//	printBoard();
+			//	printBoard();
 			out.writeBlock(board);
 		}
 		out.close();
