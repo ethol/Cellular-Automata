@@ -2,8 +2,8 @@ package CA;
 
 
 public class RuleModel implements Comparable {
-	public int[][][][][][][][][] rules;
-	public double fitnessValue= 0.0;
+	private int[][][][][][][][][] rules;
+	private double fitnessValue= 0.0;
 	public RuleModel(int[][][][][][][][][] rules){
 		this.rules = rules;
 	}
@@ -40,6 +40,18 @@ public class RuleModel implements Comparable {
 			}
 		}
 		return results;
+	}
+	public int[][][][][][][][][] getRules() {
+		return rules;
+	}
+	public void setRules(int[][][][][][][][][] rules) {
+		this.rules = rules;
+	}
+	public double getFitnessValue() {
+		return fitnessValue;
+	}
+	public void setFitnessValue(double fitnessValue) {
+		this.fitnessValue = fitnessValue;
 	}
 
 

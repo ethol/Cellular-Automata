@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class CA {
-	private boolean vonNaumanNeighbourhood = false;
+	private boolean vonNaumanNeighbourhood = true;
 	private int dimentions; 
 	private int boardSize;
 	private int numOfStates;
