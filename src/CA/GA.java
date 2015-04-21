@@ -246,7 +246,8 @@ public class GA {
 
 
 	/*
-	 * take care not to crossover to much, though random position of crossing is good, to many crossings might be a bad thing.
+	 * NOTE: take care not to crossover to much, though random position of crossing is good, to many crossings might be a bad thing.
+	 * NOTE: recalibrate and rethink this.
 	 */
 
 	private RuleModel crossover(RuleModel dad, RuleModel mom){

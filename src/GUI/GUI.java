@@ -14,13 +14,14 @@ import javax.swing.border.MatteBorder;
 
 
 public class GUI extends JFrame implements KeyListener{
-	Color [] palett = {Color.white, Color.black, Color.blue, Color.green};
+	Color [] palett = {Color.white, Color.black, Color.blue, Color.green, Color.red, Color.orange, Color.pink, Color.yellow, Color.cyan};
 	private JPanel boardPanel, instructionPanel;
 	private JPanel [][] board;
 	private JButton first, next, previous, last, goTo;
 	private JTextField goToField;
 	private ArrayList<int[][]> iterations;
 	private int pointer = 0;
+	private boolean isOneDim = false;
 	private JLabel pointerLab = new JLabel("state number : " + (pointer));
 
 
@@ -33,25 +34,57 @@ public class GUI extends JFrame implements KeyListener{
 		instructionPanel.setLayout(new GridBagLayout());
 		this.setLayout(new GridBagLayout());
 
+		if(y==1){
+			isOneDim = true;
+			board = new JPanel[x][states.size()];
+		}
 
 		GridBagConstraints c = new GridBagConstraints();
-		this.add(pointerLab, c);
 		JPanel temp;
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[0].length; j++) {
-				c.gridx=i;
-				c.gridy=j;
-				temp = new JPanel();
-				temp.setBackground(Color.white);
-				temp.setPreferredSize(new Dimension(10, 10));
-				temp.setBorder(new MatteBorder(1,1,1,1, Color.gray));
-				board[i][j] = temp;
-				boardPanel.add(temp, c);
+		if(isOneDim){
+			JScrollPane scrollPane = new JScrollPane(boardPanel);
+			scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			int width = board.length*11 + 50;
+			scrollPane.setBounds(50, 30, width, 900);
+
+
+			for (int i = 0; i < board.length; i++) {
+				for (int j=0; j < iterations.size(); j++) {
+					c.gridx=i;
+					c.gridy=j;
+					temp = new JPanel();
+					temp.setBackground(Color.white);
+					temp.setPreferredSize(new Dimension(10, 10));
+					temp.setBorder(new MatteBorder(1,1,1,1, Color.gray));
+					board[i][j] = temp;
+					boardPanel.add(temp, c);
+				}
 			}
+			c.gridx = 0;
+			c.gridy = 1;
+			JPanel contentPane = new JPanel(null);
+	        contentPane.setPreferredSize(new Dimension(width+100, 1000));
+	        contentPane.add(scrollPane);
+			this.getContentPane().add(contentPane, c);
+		}else{
+			this.add(pointerLab, c);
+			for (int i = 0; i < board.length; i++) {
+				for (int j = 0; j < board[0].length; j++) {
+					c.gridx=i;
+					c.gridy=j;
+					temp = new JPanel();
+					temp.setBackground(Color.white);
+					temp.setPreferredSize(new Dimension(10, 10));
+					temp.setBorder(new MatteBorder(1,1,1,1, Color.gray));
+					board[i][j] = temp;
+					boardPanel.add(temp, c);
+				}
+			}
+			c.gridx = 0;
+			c.gridy = 1;
+			this.add(boardPanel, c);		
 		}
-		c.gridx = 0;
-		c.gridy = 1;
-		this.add(boardPanel, c);		
 
 		first = new JButton(new ImageIcon("src\\GUI\\img\\first.jpg"));
 		first.addActionListener(new ActionListener() {
@@ -142,6 +175,10 @@ public class GUI extends JFrame implements KeyListener{
 		this.setFocusable(true);
 		update();
 
+		if(isOneDim){
+			instructionPanel.removeAll();
+		}
+
 	}
 	private void update(){
 		if (pointer==iterations.size()-1) {
@@ -161,16 +198,28 @@ public class GUI extends JFrame implements KeyListener{
 		}
 
 		pointerLab.setText("state number : " + (pointer));
-		int [][] current = iterations.get(pointer);
+		if(isOneDim){
+			int [][] current;
+			for (int i = 0; i < iterations.size(); i++) {
 
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[0].length; j++) {
-				int color = current[i][j];
-				board[i][j].setBackground(palett[color]);
+				current = iterations.get(i);
+				for (int j = 0; j < board.length; j++) {
+					int color = current[j][0];
+					board[j][i].setBackground(palett[color]);
+				}
 			}
+
+		}else{
+
+			int [][] current = iterations.get(pointer);
+			for (int i = 0; i < board.length; i++) {
+				for (int j = 0; j < board[0].length; j++) {
+					int color = current[i][j];
+					board[i][j].setBackground(palett[color]);
+				}
+			}
+
 		}
-
-
 	}
 
 

@@ -68,27 +68,6 @@ public class CA {
 		if(!vonNaumanNeighbourhood){
 			b = (int) Math.pow(numOfStates, 8);
 		}
-
-		//		for (int i = 0; i < this.rules.length; i++) {
-		//			for (int j = 0; j < this.rules[0].length; j++) {
-		//				for (int j2 = 0; j2 < this.rules[0][0].length; j2++) {
-		//					for (int k = 0; k < this.rules[0][0][0].length; k++) {
-		//						for (int k2 = 0; k2 < this.rules[0][0][0][0].length; k2++) {
-		//							for (int l = 0; l < this.rules[0][0][0][0][0].length; l++) {
-		//								for (int l2 = 0; l2 < this.rules[0][0][0][0][0][0].length; l2++) {
-		//									for (int m = 0; m < this.rules[0][0][0][0][0][0][0].length; m++) {
-		//										for (int m2 = 0; m2 < this.rules[0][0][0][0][0][0][0][0].length; m2++) {
-		//											this.rules[i][j][j2][k][k2][l][l2][m][m2] = rules.charAt(i*b+j*b/2+j2*b/4+k*8+k2*b/8+l*b/16+l2*b/32 +m*b/64+m2*b/128)-48;
-		//
-		//										}
-		//									}
-		//								}
-		//							}
-		//						}
-		//					}
-		//				}
-		//			}
-		//		}
 		int k, k1, k2,k3=0,k4=0,k5=0,k6=0,k7=0,k8=0, k9=0;
 		for (int i = 0; i < rules.length(); i++) {
 			k= i;
@@ -98,6 +77,7 @@ public class CA {
 			k-= (b/numOfStates)*k2;
 			k3 = (k/(b/(int)Math.pow(numOfStates, 2)));
 			k-= (b/(int)Math.pow(numOfStates, 2))*k3;
+			// if statement to ensure i do not divide by zero.  
 			if((b/(int)Math.pow(numOfStates, 3)!=0)){
 				k4 = (k/(b/(int)Math.pow(numOfStates, 3)));
 				k-= (b/(int)Math.pow(numOfStates, 3))*k4;
@@ -114,9 +94,8 @@ public class CA {
 					k-= (b/(int)Math.pow(numOfStates, 8))*k9;
 				}
 			}
-//			System.out.println(Integer.toBinaryString(i));
-//			System.out.println(""+k1+k2+k3+k4+k5+k6+k7+k8+k9);
-						this.rules[k1][k2][k3][k4][k5][k6][k7][k8][k9] = rules.charAt(i)-48;
+			// -48 because its a char between 0-9 so its a fast way to convert it to the corrosponding int value. 
+			this.rules[k1][k2][k3][k4][k5][k6][k7][k8][k9] = rules.charAt(i)-48;
 		}
 
 
