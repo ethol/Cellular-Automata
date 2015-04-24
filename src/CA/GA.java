@@ -194,7 +194,6 @@ public class GA {
 		/*
 		 * crossover 
 		 */
-
 		
 		for (int i = 0; i < nrBreeders; i+=2) {
 			nextGen.add(crossover(breeders.get(i), breeders.get(i+1)));
@@ -210,7 +209,11 @@ public class GA {
 		double mutateChance = 0.04;
 		char [] mutate;
 		String st;
-		for (int i = 0; i < nextGen.size(); i++) {
+		int ct = 0;
+		if(elitism){
+			ct = 1;
+		}
+		for (int i = ct; i < nextGen.size(); i++) {
 //			System.out.println("before " + nextGen.get(i));
 			mutate = nextGen.get(i).rulesToBinary().toCharArray();
 			for (int j = 0; j < mutate.length; j++) {
