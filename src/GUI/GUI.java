@@ -1,5 +1,6 @@
 package GUI;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -7,14 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 
 
 public class GUI extends JFrame implements KeyListener{
-	Color [] palett = {Color.white, Color.black, Color.blue, Color.green, Color.red, Color.orange, Color.pink, Color.yellow, Color.cyan};
+	Color [] palett = {Color.white, Color.black, Color.green, Color.orange, Color.blue, Color.red, Color.pink, Color.yellow, Color.cyan};
 	private JPanel boardPanel, instructionPanel;
 	private JPanel [][] board;
 	private JButton first, next, previous, last, goTo;
@@ -23,6 +28,9 @@ public class GUI extends JFrame implements KeyListener{
 	private int pointer = 0;
 	private boolean isOneDim = false;
 	private JLabel pointerLab = new JLabel("state number : " + (pointer));
+	private int printCounter =0;
+
+	public static final KeyStroke SAVEIMG = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
 
 
 	public GUI(int x, int y, ArrayList<int[][]> states){
@@ -64,8 +72,8 @@ public class GUI extends JFrame implements KeyListener{
 			c.gridx = 0;
 			c.gridy = 1;
 			JPanel contentPane = new JPanel(null);
-	        contentPane.setPreferredSize(new Dimension(width+100, 1000));
-	        contentPane.add(scrollPane);
+			contentPane.setPreferredSize(new Dimension(width+100, 1000));
+			contentPane.add(scrollPane);
 			this.getContentPane().add(contentPane, c);
 		}else{
 			this.add(pointerLab, c);
@@ -171,6 +179,7 @@ public class GUI extends JFrame implements KeyListener{
 		next.addKeyListener(this);
 		last.addKeyListener(this);
 		goTo.addKeyListener(this);
+		goToField.addKeyListener(this);
 		this.addKeyListener(this);
 		this.setFocusable(true);
 		update();
@@ -228,12 +237,17 @@ public class GUI extends JFrame implements KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT&&e.getComponent()!=goToField){
 			next.doClick();
+			System.out.println("next");
 		}		
 
-		if(e.getKeyCode() == KeyEvent.VK_LEFT){
+		if(e.getKeyCode() == KeyEvent.VK_LEFT&&e.getComponent()!=goToField){
 			previous.doClick();
+		}
+
+		if(((e.getModifiersEx()  | e.getModifiers())==SAVEIMG.getModifiers()&&/**/(e.getKeyCode()==SAVEIMG.getKeyCode()))){
+			printImg("lattice");
 		}
 	}
 	@Override
@@ -245,6 +259,37 @@ public class GUI extends JFrame implements KeyListener{
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+	/*
+	 * prints a image of the board and puts it into the src folder
+	 */
+	public void printImg(String filename) {
+		try {
+			ImageIO.write(
+					getScreenShot(this.boardPanel),
+					"png",
+					new File(filename + printCounter + ".png"));
+			printCounter++;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/*
+	 * Returns a image file of the component.
+	 */
+	public static BufferedImage getScreenShot(
+			Component component) {
+
+		BufferedImage image = new BufferedImage(
+				component.getWidth(),
+				component.getHeight(),
+				BufferedImage.TYPE_INT_RGB
+				);
+		// call the Component's paint method, using
+		// the Graphics object of the image.
+		component.paint( image.getGraphics() ); // alternately use .printAll(..)
+		return image;
 	}
 
 

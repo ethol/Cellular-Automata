@@ -13,7 +13,10 @@ public class CA {
 	private int [][][][][][][][][] rules; // L,C,R,U,D,UL,UR,DL,UR;
 	private CAOutputWriter out;
 
-	public CA(int dimentions, int boardSize, int numOfStates, boolean ran) {
+	public CA(int dimentions, int boardSize, int numOfStates, boolean ran, boolean VNN) {
+		if(dimentions!=1){
+			this.vonNaumanNeighbourhood = VNN;
+		}
 		this.dimentions = dimentions;
 		this.boardSize = boardSize;
 		this.numOfStates = numOfStates;
@@ -42,10 +45,20 @@ public class CA {
 
 
 	}
+/**'
+ * 
+ * @param dimentions
+ * @param boardSize
+ * @param numOfStates
+ * @param ran
+ * @param VNN (Von Neumann Neigbourhood)
+ * @param numofRuns
+ */
 
-
-	public CA(int dimentions, int boardSize, int numOfStates, boolean ran, int numofRuns) {
-		this(dimentions,boardSize,numOfStates,ran);
+	public CA(int dimentions, int boardSize, int numOfStates, boolean ran, boolean VNN, int numofRuns) {
+		
+		this(dimentions,boardSize,numOfStates,ran, VNN);
+		
 		start(numofRuns);
 
 	}

@@ -3,13 +3,13 @@ package CA;
 
 public class Run {
 
-	
-	
+
+
 	public static void main(String[] args) {
 		/*
 		 * glidergun in a size 41 square CA
 		 */
-		int[][]gliderGun = new int[][]{
+		final int[][]gliderGun = new int[][]{
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -51,29 +51,63 @@ public class Run {
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-				
-		
+
+
 		};
+
 		
-		
+		final int[][] marioMin = new int[][]{
+				{0,0,0,2,2,2,2,2,0,0,0,0},
+				{0,0,2,2,2,2,2,2,2,2,2,0},
+				{0,0,1,1,1,3,3,1,3,0,0,0},
+				{0,1,3,1,3,3,3,1,3,3,3,0},
+				{0,1,3,1,1,3,3,3,1,3,3,3},
+				{0,1,1,3,3,3,3,1,1,1,1,0},
+				{0,0,0,3,3,3,3,3,3,3,0,0},
+				{0,0,1,1,2,1,1,1,0,0,0,0},
+				{0,1,1,1,2,1,1,2,1,1,1,0},
+				{1,1,1,1,2,2,2,2,1,1,1,1},
+				{3,3,1,2,3,2,2,3,2,1,3,3},
+				{3,3,3,2,2,2,2,2,2,3,3,3},
+				{3,3,2,2,2,2,2,2,2,2,3,3},
+				{0,0,2,2,2,0,0,2,2,2,0,0},
+				{0,1,1,1,0,0,0,0,1,1,1,0},
+				{1,1,1,1,0,0,0,0,1,1,1,1}
+		};
+	
+		final int[][] creeper = new int[][]{
+				{2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2},
+				{2,2,1,1,2,2,1,1,2,2},
+				{2,2,1,1,2,2,1,1,2,2},
+				{2,2,2,2,1,1,2,2,2,2},
+				{2,2,2,1,1,1,1,2,2,2},
+				{2,2,2,1,1,1,1,2,2,2},
+				{2,2,2,1,2,2,1,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2},
+		};
+
+
 		/*  Initialize variables */ 
 		int dimentions = 2; 
-		int boardSize = 41;
-		int numOfStates = 2;
-		int numberOfRuns = 900;
-		boolean randomStart = true;
-		
-		CA ca = new CA(dimentions, boardSize, numOfStates, randomStart);
+		int boardSize = 10;
+		int numOfStates = 3;
+		int numberOfRuns = 20;
+		boolean randomStart = false;
+		boolean vonNeumannNeighbourhood = true;
+
+		CA ca = new CA(dimentions, boardSize, numOfStates, randomStart, vonNeumannNeighbourhood);
+//		ca.setRulesElementary(54);
 //		ca.setRandomRules();
-		ca.setGameOfLife();
+//		ca.setGameOfLife();
 //		ca.setBoard(gliderGun);
-		RuleModel rm = new RuleModel(ca.getRules());
-		System.out.println(rm);
-		ca.setRules(rm.rulesToBinary());
-		rm = new RuleModel(ca.getRules());
-		System.out.println(rm);
+		ca.setRules("211100000110022100110201010222121111021101012110011211120110102022011112022122222102011012010202102202102012111012211212012110001111211000202211202012011002101212000001202010020022010000202001221002011011011021101021010000112110002212022202222");
 		ca.start(numberOfRuns);
 		
+	
 
 	}
+	
+	
 }

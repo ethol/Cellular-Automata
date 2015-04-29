@@ -24,12 +24,31 @@ public class CAOutputWriter {
 			e.printStackTrace();
 		}
 	}
+	
+	public CAOutputWriter (String file){
+		//System.out.println("writing to : " + outputFolder+outputFile);
+
+		outputFile = file;
+		File fil = new File(outputFolder + outputFile);
+
+		try {
+			writer = new PrintWriter(outputFolder + outputFile, "UTF-8");
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 
 
 	public void writeBlock(int board[][]){
 		writer.println(boardToString(board));
 
 
+	}
+	public void writeline(String line){
+		writer.println(line);
 	}
 
 	private String boardToString(int board[][]){
