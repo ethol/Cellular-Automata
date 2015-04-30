@@ -31,6 +31,7 @@ public class GUI extends JFrame implements KeyListener{
 	private int printCounter =0;
 
 	public static final KeyStroke SAVEIMG = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK);
+	public static final KeyStroke SAVEAllIMG = KeyStroke.getKeyStroke(KeyEvent.VK_S, (KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK));
 
 
 	public GUI(int x, int y, ArrayList<int[][]> states){
@@ -247,7 +248,19 @@ public class GUI extends JFrame implements KeyListener{
 		}
 
 		if(((e.getModifiersEx()  | e.getModifiers())==SAVEIMG.getModifiers()&&/**/(e.getKeyCode()==SAVEIMG.getKeyCode()))){
-			printImg("lattice");
+			printImg("luigi");
+		}
+		/*
+		 * generates all images
+		 */
+		if(((e.getModifiersEx()  | e.getModifiers())==SAVEAllIMG.getModifiers()&&/**/(e.getKeyCode()==SAVEAllIMG.getKeyCode()))){
+			pointer = 0;
+			update();
+			printImg("mushroom");
+			for (int i = 0; i < iterations.size()-1; i++) {
+				next.doClick();
+				printImg("mushroom");
+			}
 		}
 	}
 	@Override
