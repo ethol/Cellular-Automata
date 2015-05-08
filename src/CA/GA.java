@@ -28,7 +28,7 @@ public class GA implements Runnable{
 			{0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0},
 			{0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0}
 	};
-	
+
 	final int[][] mushroom = new int[][]{
 			{0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0},
 			{0,0,0,1,1,2,2,2,2,0,0,1,1,0,0,0},
@@ -47,7 +47,7 @@ public class GA implements Runnable{
 			{0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0},
 			{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0}
 	};
-	
+
 	final int[][] creeper = new int[][]{
 			{2,2,2,2,2,2,2,2,2,2},
 			{2,2,2,2,2,2,2,2,2,2},
@@ -59,6 +59,15 @@ public class GA implements Runnable{
 			{2,2,2,1,2,2,1,2,2,2},
 			{2,2,2,2,2,2,2,2,2,2},
 			{2,2,2,2,2,2,2,2,2,2},
+	};
+	final int[][] creeperEasy = new int[][]{
+			{1,1,0,0,1,1},
+			{1,1,0,0,1,1},
+			{0,0,1,1,0,0},
+			{0,1,1,1,1,0},
+			{0,1,1,1,1,0},
+			{0,1,0,0,1,0},
+
 	};
 	private Date startTime = new Date();
 
@@ -77,7 +86,7 @@ public class GA implements Runnable{
 
 	public GA(int popSize, int maxIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism) {
-	
+
 		this.popSize = popSize;
 		this.maxIterations = maxIterations;
 		this.dimentions = dimentions;
@@ -103,16 +112,10 @@ public class GA implements Runnable{
 
 		}
 		//		System.out.println("best: "+max);
-		for (int i = 0; i < creeper.length; i++) {
-			for (int j = 0; j < creeper.length; j++) {
-				if(creeper[i][j]==2){
-					creeper[i][j] =0;
-				}
-			}
-		}
+
 		testGeneration();
 		//run(maxIterations);
-		
+
 
 
 
@@ -123,11 +126,11 @@ public class GA implements Runnable{
 
 
 			//		System.out.println(population);
-//			System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
+			//			System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
 			iterateGeneration();
-//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
+			//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
 			testGeneration();
-//			System.out.println(population);
+			//			System.out.println(population);
 		}
 
 
@@ -139,7 +142,7 @@ public class GA implements Runnable{
 		double avarage = 0.0;
 		RuleModel max = new RuleModel((generator.cloneRules()));
 		for (int i = 0; i < popSize; i++) {
-//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
+			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
 			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
@@ -149,10 +152,10 @@ public class GA implements Runnable{
 			//			System.out.println(rm);
 			avarage+= rm.getFitnessValue();
 		}
-		
-//		System.out.println("best: "+max);
+
+		//		System.out.println("best: "+max);
 		bestList.add(max.getFitnessValue());
-//		System.out.println("avarage: "+ avarage/popSize);
+		//		System.out.println("avarage: "+ avarage/popSize);
 		avarageList.add(avarage/popSize);
 		return max;
 	}
@@ -205,24 +208,32 @@ public class GA implements Runnable{
 
 		return fitness;
 	}
-	
+
 	private double  pixelFitnessFunction(int[][][][][][][][][] rules){
 		double fitness = 0.0;
-		
+		double maxFitness = 0.0;
 		generator.resetBoard();
 		generator.setRules(rules);
-		generator.start(20);
-		int board[][] = generator.getBoard();
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[0].length; j++) {
-				if(board[i][j] ==creeper[i][j]){
-					fitness++;
+		generator.start(5);
+		for (int k = 0; k < 35; k++) {
+
+			generator.start(1);
+			int board[][] = generator.getBoard();
+			for (int i = 0; i < board.length; i++) {
+				for (int j = 0; j < board[0].length; j++) {
+					if(board[i][j] ==creeperEasy[i][j]){
+						fitness++;
+					}
 				}
 			}
+			if(fitness>maxFitness){
+				maxFitness=fitness;
+			}
+			fitness = 0.0;
+
 		}
 
-
-		return fitness;
+		return maxFitness;
 	}
 
 
@@ -339,7 +350,7 @@ public class GA implements Runnable{
 
 	private RuleModel crossover(RuleModel dad, RuleModel mom){
 
-		double crossChance = 0.90;
+		double crossChance = 0.10;
 		int[][][][][][][][][] rules =generator.cloneRules();//will be overwritten
 		boolean dadGenes = true;
 
@@ -361,7 +372,7 @@ public class GA implements Runnable{
 								for (int l2 = 0; l2 < rules[0][0][0][0][0][0].length; l2++) {
 									for (int m = 0; m < rules[0][0][0][0][0][0][0].length; m++) {
 										for (int m2 = 0; m2 < rules[0][0][0][0][0][0][0][0].length; m2++) {
-											if(Math.random()>crossChance){
+											if(Math.random()<crossChance){
 												dadGenes= !dadGenes;
 											}
 
@@ -406,19 +417,19 @@ public class GA implements Runnable{
 		String filesuffix = ".txt";
 		String file = "GA";
 		char tab = 9;
-		int nrOfGA = 40;
+		int nrOfGA = 20;
 		CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
 		ArrayList<GA> gaList = new ArrayList<GA>();
-	
+
 		Thread [] tr = new Thread[nrOfGA];
 		for (int i = 0; i < nrOfGA; i++) {
 			System.out.println("trail nr:" + i);
-			GA ga = new GA(200, 400, 2, 10, 2, true);
+			GA ga = new GA(200, 20000, 2, 6, 2, true);
 			tr[i] = new Thread(ga);
 			tr[i].start();
 			gaList.add(ga);
 		}
-		
+
 		try {
 			for (int i = 0; i < tr.length; i++) {
 				tr[i].join();
@@ -427,9 +438,9 @@ public class GA implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
+
+
+
 		// for docu
 		String line;
 		writer.writeline("Avarage");
@@ -457,9 +468,9 @@ public class GA implements Runnable{
 			line+=  gaList.get(j).getBestSolution().rulesToBinary()+ "" + tab;
 		}
 		writer.writeline(line);
-		
+
 		writer.close();
-		
+
 
 	}
 
@@ -471,20 +482,24 @@ public class GA implements Runnable{
 		for (int i = 0; i < this.maxIterations; i++) {
 
 
-//					System.out.println(population);
-//			System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
+			//					System.out.println(population);
+			//			System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
 			iterateGeneration();
-//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
-			testGeneration();
-//			System.out.println(population);
+			//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
+			bestSolution  = testGeneration();
+			//			System.out.println(population);
+			System.out.println("this thread is " + i + " out of " + maxIterations + "runs." ) ;
+			if(i%100 == 0){
+				System.out.println(bestSolution);
+			}
 		}
-		
+
 		RuleModel rm = testGeneration();
 		bestSolution = rm;
-		
+
 		generator.resetBoard();
 		generator.setRules(rm.getRules());
 		generator.start(20);
-		
+
 	}
 }
