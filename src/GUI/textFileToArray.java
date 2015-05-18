@@ -69,7 +69,7 @@ public class textFileToArray {
 	}
 	public static void main(String[] args) {
 //		ArrayList<int[][]> test = textFileToArray.getArray("src\\CA\\output\\mario.txt");
-		ArrayList<int[][]> test = textFileToArray.getArray("src\\CA\\output\\test.txt");
+		ArrayList<int[][]> test = textFileToArray.getArray("src\\CA\\output\\test2.txt");
 		int boardSize = test.get(0).length;
 		int boardSize2 = test.get(0)[0].length;
 

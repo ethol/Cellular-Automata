@@ -2,9 +2,9 @@ package CA;
 
 
 public class RuleModel implements Comparable {
-	private int[][][][][][][][][] rules;
+	private byte[][][][][][][][][] rules;
 	private double fitnessValue= 0.0;
-	public RuleModel(int[][][][][][][][][] rules){
+	public RuleModel(byte[][][][][][][][][] rules){
 		this.rules = rules;
 	}
 	@Override
@@ -41,10 +41,10 @@ public class RuleModel implements Comparable {
 		}
 		return results;
 	}
-	public int[][][][][][][][][] getRules() {
+	public byte[][][][][][][][][] getRules() {
 		return rules;
 	}
-	public void setRules(int[][][][][][][][][] rules) {
+	public void setRules(byte[][][][][][][][][] rules) {
 		this.rules = rules;
 	}
 	public double getFitnessValue() {

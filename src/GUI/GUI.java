@@ -240,7 +240,6 @@ public class GUI extends JFrame implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT&&e.getComponent()!=goToField){
 			next.doClick();
-			System.out.println("next");
 		}		
 
 		if(e.getKeyCode() == KeyEvent.VK_LEFT&&e.getComponent()!=goToField){
@@ -248,7 +247,7 @@ public class GUI extends JFrame implements KeyListener{
 		}
 
 		if(((e.getModifiersEx()  | e.getModifiers())==SAVEIMG.getModifiers()&&/**/(e.getKeyCode()==SAVEIMG.getKeyCode()))){
-			printImg("luigi");
+			printImg("flag");
 		}
 		/*
 		 * generates all images
@@ -256,10 +255,10 @@ public class GUI extends JFrame implements KeyListener{
 		if(((e.getModifiersEx()  | e.getModifiers())==SAVEAllIMG.getModifiers()&&/**/(e.getKeyCode()==SAVEAllIMG.getKeyCode()))){
 			pointer = 0;
 			update();
-			printImg("mushroom");
+			printImg("flag");
 			for (int i = 0; i < iterations.size()-1; i++) {
 				next.doClick();
-				printImg("mushroom");
+				printImg("flag");
 			}
 		}
 	}

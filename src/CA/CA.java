@@ -4,14 +4,15 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class CA {
-	private boolean vonNaumanNeighbourhood = true;
-	private int dimentions; 
-	private int boardSize;
-	private int numOfStates;
-	private int [][] board;
-	private int [][] boardNext;
-	private int [][][][][][][][][] rules; // L,C,R,U,D,UL,UR,DL,UR;
-	private CAOutputWriter out;
+	protected boolean vonNaumanNeighbourhood = true;
+	protected int dimentions; 
+	protected int boardSize;
+	protected int numOfStates;
+	protected int [][] board;
+	protected int [][] boardNext;
+	private byte [][][][][][][][][] rules; // L,C,R,U,D,UL,UR,DL,UR;
+	protected boolean useWriter = false; //speeds up slightly if not used.
+	protected CAOutputWriter out;
 
 	public CA(int dimentions, int boardSize, int numOfStates, boolean ran, boolean VNN) {
 		if(dimentions!=1){
@@ -20,7 +21,9 @@ public class CA {
 		this.dimentions = dimentions;
 		this.boardSize = boardSize;
 		this.numOfStates = numOfStates;
-		this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
+		if(useWriter){
+			this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
+		}
 		if(dimentions == 1){
 			board = new int [boardSize][1];
 			boardNext = new int [boardSize][1];
@@ -35,34 +38,42 @@ public class CA {
 
 		}
 		if(dimentions == 1){
-			rules = new int[numOfStates][numOfStates][numOfStates][1][1][1][1][1][1];
+			rules = new byte[numOfStates][numOfStates][numOfStates][1][1][1][1][1][1];
 		}else if(vonNaumanNeighbourhood){
-			rules = new int[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][1][1][1][1];
+			rules = new byte[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][1][1][1][1];
 		}else {
-			rules = new int[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates];
+			rules = new byte[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates];
 		}
-		setRandomRules();
+		// removed as it is no longer ness. and messes with IBA
+//		setRandomRules();
 
 
 	}
-/**'
- * 
- * @param dimentions
- * @param boardSize
- * @param numOfStates
- * @param ran
- * @param VNN (Von Neumann Neigbourhood)
- * @param numofRuns
- */
+	/**'
+	 * 
+	 * @param dimentions
+	 * @param boardSize
+	 * @param numOfStates
+	 * @param ran
+	 * @param VNN (Von Neumann Neigbourhood)
+	 * @param numofRuns
+	 */
 
 	public CA(int dimentions, int boardSize, int numOfStates, boolean ran, boolean VNN, int numofRuns) {
-		
+
 		this(dimentions,boardSize,numOfStates,ran, VNN);
-		
+		setRandomRules();
 		start(numofRuns);
 
 	}
-	public void setRules(int [][][][][][][][][] rules){
+	/**
+	 * Use before you start the CA.
+	 */
+	public void useWriter(){
+		this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
+		useWriter = true;
+	}
+	public void setRules(byte [][][][][][][][][] rules){
 		this.rules = rules;
 	}
 
@@ -108,13 +119,13 @@ public class CA {
 				}
 			}
 			// -48 because its a char between 0-9 so its a fast way to convert it to the corrosponding int value. 
-			this.rules[k1][k2][k3][k4][k5][k6][k7][k8][k9] = rules.charAt(i)-48;
+			this.rules[k1][k2][k3][k4][k5][k6][k7][k8][k9] = (byte) (rules.charAt(i)-48);
 		}
 
 
 	}
 
-	public int [][][][][][][][][]  getRules(){
+	public byte [][][][][][][][][]  getRules(){
 		return this.rules;
 	}
 
@@ -123,14 +134,14 @@ public class CA {
 		for (int i = bin.length(); i < 8; i++) {
 			bin = "0" + bin;
 		}
-		rules[0][0][0][0][0][0][0][0][0] = bin.charAt(7)-48;
-		rules[0][0][1][0][0][0][0][0][0] = bin.charAt(6)-48;
-		rules[0][1][0][0][0][0][0][0][0] = bin.charAt(5)-48;
-		rules[0][1][1][0][0][0][0][0][0] = bin.charAt(4)-48;
-		rules[1][0][0][0][0][0][0][0][0] = bin.charAt(3)-48;
-		rules[1][0][1][0][0][0][0][0][0] = bin.charAt(2)-48;
-		rules[1][1][0][0][0][0][0][0][0] = bin.charAt(1)-48;
-		rules[1][1][1][0][0][0][0][0][0] = bin.charAt(0)-48;
+		rules[0][0][0][0][0][0][0][0][0] = (byte) (bin.charAt(7)-48);
+		rules[0][0][1][0][0][0][0][0][0] = (byte) (bin.charAt(6)-48);
+		rules[0][1][0][0][0][0][0][0][0] = (byte) (bin.charAt(5)-48);
+		rules[0][1][1][0][0][0][0][0][0] = (byte) (bin.charAt(4)-48);
+		rules[1][0][0][0][0][0][0][0][0] = (byte) (bin.charAt(3)-48);
+		rules[1][0][1][0][0][0][0][0][0] = (byte) (bin.charAt(2)-48);
+		rules[1][1][0][0][0][0][0][0][0] = (byte) (bin.charAt(1)-48);
+		rules[1][1][1][0][0][0][0][0][0] = (byte) (bin.charAt(0)-48);
 
 	}
 	public void resetBoard(){
@@ -143,7 +154,9 @@ public class CA {
 		}
 
 		board[(board.length/2)][board[0].length/2] = 1;
+		if(useWriter){
 		this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
+		}
 	}
 	public void setGameOfLife(){
 		vonNaumanNeighbourhood = false;
@@ -215,7 +228,7 @@ public class CA {
 								for (int l2 = 0; l2 < rules[0][0][0][0][0][0].length; l2++) {
 									for (int m = 0; m < rules[0][0][0][0][0][0][0].length; m++) {
 										for (int m2 = 0; m2 < rules[0][0][0][0][0][0][0][0].length; m2++) {
-											rules[i][j][j2][k][k2][l][l2][m][m2] = (int) (Math.random()*numOfStates);
+											rules[i][j][j2][k][k2][l][l2][m][m2] = (byte) (Math.random()*numOfStates);
 											/*
 							System.out.print("i:" + i);
 							System.out.print("j:" + j);
@@ -238,9 +251,9 @@ public class CA {
 	/*
 	 * incase you ever wonder if you are insane
 	 */
-	public int[][][][][][][][][] cloneRules() {
+	public byte[][][][][][][][][] cloneRules() {
 
-		int[][][][][][][][][] retur = new int [rules.length][rules[0].length][rules[0][0].length][rules[0][0][0].length]
+		byte[][][][][][][][][] retur = new byte [rules.length][rules[0].length][rules[0][0].length][rules[0][0][0].length]
 				[rules[0][0][0][0].length][rules[0][0][0][0][0].length][rules[0][0][0][0][0][0].length][rules[0][0][0][0][0][0][0].length][rules[0][0][0][0][0][0][0][0].length];
 
 		for (int i = 0; i < rules.length; i++) {
@@ -306,7 +319,9 @@ public class CA {
 	}
 
 	public void start(int num){
+		if(useWriter){
 		out.writeBlock(board);
+		}
 		//	printBoard();
 		int l,r,c,u=0,d=0,ul=0,ur=0,dl=0,dr=0;
 		for (int k = 0; k < num; k++) {
@@ -334,9 +349,13 @@ public class CA {
 			}
 			setBoard(boardNext);
 			//	printBoard();
+			if(useWriter){
 			out.writeBlock(board);
+			}
 		}
+		if(useWriter){
 		out.close();
+		}
 	}
 	public void setBoard(int[][] newBoard){
 		for (int i = 0; i < newBoard[0].length; i++) {

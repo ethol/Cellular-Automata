@@ -69,20 +69,29 @@ public class GA implements Runnable{
 			{0,1,0,0,1,0},
 
 	};
-	private Date startTime = new Date();
+	final int[][] flag = new int[][]{
+			{1,1,2,2,3,3},
+			{1,1,2,2,3,3},
+			{1,1,2,2,3,3},
+			{1,1,2,2,3,3},
+			{1,1,2,2,3,3},
+			{1,1,2,2,3,3},
 
-	private int popSize;
-	private int maxIterations;
-	private int dimentions; 
-	private int boardSize;
-	private int numOfStates;
-	boolean elitism = false;
+	};
+	private Date startTime = new Date();
+	protected double maxFitness; 
+	protected int popSize;
+	protected int maxIterations;
+	protected int dimentions; 
+	protected int boardSize;
+	protected int numOfStates;
+	protected boolean elitism = false;
 	private CA generator;
 	private ArrayList<RuleModel> population;
 
-	private ArrayList<Double> avarageList = new ArrayList<Double>();
-	private ArrayList<Double> bestList = new ArrayList<Double>();
-	private RuleModel bestSolution;
+	protected ArrayList<Double> avarageList = new ArrayList<Double>();
+	protected ArrayList<Double> bestList = new ArrayList<Double>();
+	protected RuleModel bestSolution;
 
 	public GA(int popSize, int maxIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism) {
@@ -93,14 +102,15 @@ public class GA implements Runnable{
 		this.boardSize = boardSize;
 		this.numOfStates = numOfStates;
 		this.elitism = elitism;
+		this.maxFitness = Math.pow(boardSize, dimentions);//NOT TRUE FOR ALL FITNESS FUNCTIONS. 
 		population = new ArrayList<RuleModel>();
 
 		generator = new CA(dimentions, boardSize, numOfStates, false, true);
 		//		RuleModel max = new RuleModel((generator.getRules()));
 		RuleModel rm;
 		for (int i = 0; i < popSize; i++) {
-			rm = new RuleModel(generator.cloneRules());
 			generator.setRandomRules();
+			rm = new RuleModel(generator.cloneRules());
 			//						System.out.println(rm);
 			//rm.setFitnessValue(fitnessFunction(rm.getRules()));
 			population.add(rm);
@@ -113,7 +123,7 @@ public class GA implements Runnable{
 		}
 		//		System.out.println("best: "+max);
 
-		testGeneration();
+		//testGeneration();
 		//run(maxIterations);
 
 
@@ -161,7 +171,7 @@ public class GA implements Runnable{
 	}
 
 
-	private double  majorityFitnessFunction(int[][][][][][][][][] rules){
+	private double  majorityFitnessFunction(byte[][][][][][][][][] rules){
 
 
 
@@ -209,7 +219,7 @@ public class GA implements Runnable{
 		return fitness;
 	}
 
-	private double  pixelFitnessFunction(int[][][][][][][][][] rules){
+	private double  pixelFitnessFunction(byte[][][][][][][][][] rules){
 		double fitness = 0.0;
 		double maxFitness = 0.0;
 		generator.resetBoard();
@@ -221,7 +231,7 @@ public class GA implements Runnable{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==creeperEasy[i][j]){
+					if(board[i][j] ==flag[i][j]){
 						fitness++;
 					}
 				}
@@ -308,8 +318,38 @@ public class GA implements Runnable{
 		if(elitism){
 			ct = 1;
 		}
-		for (int i = ct; i < nextGen.size(); i++) {
-			//			System.out.println("before " + nextGen.get(i));
+		RuleModel rm;
+		for (int p = ct; p < nextGen.size(); p++) {
+			rm = nextGen.get(p);
+
+			for (int i = 0; i < rm.getRules().length; i++) {
+				for (int j = 0; j < rm.getRules()[0].length; j++) {
+					for (int j2 = 0; j2 < rm.getRules()[0][0].length; j2++) {
+						for (int k = 0; k < rm.getRules()[0][0][0].length; k++) {
+							for (int k2 = 0; k2 < rm.getRules()[0][0][0][0].length; k2++) {
+								for (int l = 0; l < rm.getRules()[0][0][0][0][0].length; l++) {
+									for (int l2 = 0; l2 < rm.getRules()[0][0][0][0][0][0].length; l2++) {
+										for (int m = 0; m < rm.getRules()[0][0][0][0][0][0][0].length; m++) {
+											for (int m2 = 0; m2 < rm.getRules()[0][0][0][0][0][0][0][0].length; m2++) {
+												if(Math.random()<mutateChance){
+													rm.getRules()[i][j][j2][k][k2][l][l2][m][m2] = (byte)(Math.random()*numOfStates);
+												}
+
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+
+//OLD mutation code(very slow)
+
+
+			/*	//			System.out.println("before " + nextGen.get(i));
 			mutate = nextGen.get(i).rulesToBinary().toCharArray();
 			for (int j = 0; j < mutate.length; j++) {
 				if(Math.random()<mutateChance){
@@ -322,7 +362,7 @@ public class GA implements Runnable{
 			generator.setRules(st);
 			nextGen.get(i).setRules(generator.cloneRules());
 			//			System.out.println("after " + nextGen.get(i));
-
+		/**/
 		}
 
 		/*
@@ -351,7 +391,7 @@ public class GA implements Runnable{
 	private RuleModel crossover(RuleModel dad, RuleModel mom){
 
 		double crossChance = 0.10;
-		int[][][][][][][][][] rules =generator.cloneRules();//will be overwritten
+		byte[][][][][][][][][] rules =generator.cloneRules();//will be overwritten
 		boolean dadGenes = true;
 
 		//		System.out.println("dad:" + dad.rulesToBinary());
@@ -417,14 +457,14 @@ public class GA implements Runnable{
 		String filesuffix = ".txt";
 		String file = "GA";
 		char tab = 9;
-		int nrOfGA = 20;
+		int nrOfGA = 100;
 		CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
 		ArrayList<GA> gaList = new ArrayList<GA>();
 
 		Thread [] tr = new Thread[nrOfGA];
 		for (int i = 0; i < nrOfGA; i++) {
 			System.out.println("trail nr:" + i);
-			GA ga = new GA(200, 20000, 2, 6, 2, true);
+			GA ga = new GA(50, 100000, 2, 6, 4, true);
 			tr[i] = new Thread(ga);
 			tr[i].start();
 			gaList.add(ga);
@@ -483,13 +523,13 @@ public class GA implements Runnable{
 
 
 			//					System.out.println(population);
-			//			System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
+//			System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
 			iterateGeneration();
-			//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
+//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
 			bestSolution  = testGeneration();
 			//			System.out.println(population);
-			System.out.println("this thread is " + i + " out of " + maxIterations + "runs." ) ;
 			if(i%100 == 0){
+				System.out.println("this thread is " + i + " out of " + maxIterations + "runs." ) ;
 				System.out.println(bestSolution);
 			}
 		}
@@ -497,9 +537,9 @@ public class GA implements Runnable{
 		RuleModel rm = testGeneration();
 		bestSolution = rm;
 
-		generator.resetBoard();
-		generator.setRules(rm.getRules());
-		generator.start(20);
+		//		generator.resetBoard();
+		//		generator.setRules(rm.getRules());
+		//		generator.start(40);
 
 	}
 }

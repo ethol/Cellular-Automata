@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 
 public class CAOutputWriter {
 	private String outputFolder = "src\\CA\\output\\"; 
-	private String outputFile ="test.txt";
+	private String outputFile ="test2.txt";
 	private PrintWriter writer;
 
 	public CAOutputWriter (int dimentions, int boardSize, int numOfStates){

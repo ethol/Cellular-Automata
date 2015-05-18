@@ -1,7 +1,7 @@
 package CA;
 
 public class IBARuleSett {
-	public final String  [] ruleName = {"AND", "OR", "XOR", "NOT" , "INV", "MIN", "MAX" , "SET", "INC", "DEC", "SWAP" , "ROR", "ROL", "ROU", "ROD", "NOP"};
+	public final static String  [] ruleName = {"AND", "OR", "XOR", "NOT" , "INV", "MIN", "MAX" , "SET", "INC", "DEC", "SWAP" , "ROR", "ROL", "ROU", "ROD", "NOP"};
 	private int [][] rules;
 	private int nOS; //Number of states
 	private int [] nH = new int [5]; // Neighborhood 
@@ -18,38 +18,57 @@ public class IBARuleSett {
 	}
 	public int preformRules(int [] nH){
 		this.nH = nH;
+//		printNH();
 		for (int i = 0; i < rules.length; i++) {
 			calculate(rules[i][0], rules[i][1], rules[i][2]);//makes strong assumptions of rules array. 
 		}
+//		printNH();
 		return nH[1];
+	}
+	
+	public void printNH(){
+		System.out.println("  "+nH[3] + "  ");
+		System.out.println(nH[0] +" "+nH[1] + " " + nH[2]);
+		System.out.println("  "+nH[4] + "  ");
 	}
 	/*
 	 * Ever wanted to implement a RISC architecture into JAVA? Of course you have who doesen't, this is one way:
 	 */
 	public void calculate(int rule, int op1, int op2){
 		int temp, temp2;
+	//	System.out.println(ruleName[rule]);
+//		System.out.println("rule" + rule);
 		switch(rule){
 		case 0: //AND
 			nH[op1] = nH[op1] & nH[op2] ; 	
+			break;
 		case 1: //OR
 			nH[op1] = nH[op1] | nH[op2] ; 	
+			break;
 		case 2: //XOR
-			nH[op1] = nH[op1] ^ nH[op2] ; 	
+			nH[op1] = nH[op1] ^ nH[op2] ;
+			break;
 		case 3: //NOT
-			nH[op1] = ~nH[op1]; 			
+			nH[op1] = ~nH[op1]; 		
+			break;
 		case 4: //INV
-			nH[op1] = nOS - nH[op2] ; 		
+			nH[op1] = nOS - nH[op1] ; 	
+			break;
 		case 5: //MAX
 			nH[op1] = Math.max(nH[op1], nH[op2]);
+			break;
 		case 6: //MIN
 			nH[op1] = Math.min(nH[op1], nH[op2]);
+			break;
 		case 7: //SET
 			nH[op1] = nH[op2];
 			return;
 		case 8: //INC
-			nH[op1] = nH[op1]++;
+			nH[op1]++;
+			break;
 		case 9: //DEC
-			nH[op1] =  nH[op1]--;
+			nH[op1]--;
+			break;
 		case 10: //SWAP
 			temp = nH[op1];
 			nH[op1] = nH[op2];
@@ -85,7 +104,7 @@ public class IBARuleSett {
 			return;
 		default: //NOP
 		}
-		// many of the mathimatical operations can cause overflow so modulo. also inverse java modolu accsept negative numbers which we dont want so we have to add nOS if it yealds a neg. 
+		// many of the mathimatical operations can cause overflow so modulo. also java modulo accept negative numbers which we don't want so we have to add nOS if it yields a neg. 
 		nH[op1]=nH[op1] %nOS;
 		if(nH[op1]<0){
 			nH[op1]+=nOS;
