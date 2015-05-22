@@ -255,10 +255,10 @@ public class GUI extends JFrame implements KeyListener{
 		if(((e.getModifiersEx()  | e.getModifiers())==SAVEAllIMG.getModifiers()&&/**/(e.getKeyCode()==SAVEAllIMG.getKeyCode()))){
 			pointer = 0;
 			update();
-			printImg("flag");
+			printImg("creeper");
 			for (int i = 0; i < iterations.size()-1; i++) {
 				next.doClick();
-				printImg("flag");
+				printImg("creeper");
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package CA;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 public class GAIBA extends GA{
 	private int numberOfInstructions;
@@ -43,7 +44,7 @@ public class GAIBA extends GA{
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
 			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
-			if(rm.getFitnessValue()>max.getFitnessValue()){
+			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
 			//			System.out.println(rm);
@@ -69,7 +70,7 @@ public class GAIBA extends GA{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==creeperEasy[i][j]){
+					if(board[i][j] ==flag[i][j]){
 						fitness++;
 					}
 				}
@@ -252,29 +253,43 @@ public class GAIBA extends GA{
 
 
 	public static void main(String[] args) {
+		Date start = new Date();
 		String filesuffix = ".txt";
 		String file = "GAIBA";
 		char tab = 9;
 		int nrOfGA = 100;
+		int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
 		CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
 		ArrayList<GAIBA> gaList = new ArrayList<GAIBA>();
 
 		Thread [] tr = new Thread[nrOfGA];
-		for (int i = 0; i < nrOfGA; i++) {
-			System.out.println("trail nr:" + i);
-			GAIBA ga = new GAIBA(50, 1000, 2, 6, 2, true, 10);
-			tr[i] = new Thread(ga);
-			tr[i].start();
-			gaList.add(ga);
-		}
+		int k = 0;
+		while(k<nrOfGA){
+			for (int j = 0; j < MaxRunningGAAtTheTime; j++) {
+				if(k==nrOfGA) {
+					break;
+				}
+				System.out.println("trail nr:" + k);
+				GAIBA ga = new GAIBA(50, 100000, 2, 6, 4, true,10);
+				tr[k] = new Thread(ga);
+				tr[k].start();
+				gaList.add(ga);
+				k++;
 
-		try {
-			for (int i = 0; i < tr.length; i++) {
-				tr[i].join();
 			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			try {
+
+				for (int j = k-MaxRunningGAAtTheTime; j < k; j++) {
+					if(j==nrOfGA){
+						break;
+					}
+					tr[j].join();
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		// finds the list with the biggest size.
 		int biggest = 0;
@@ -321,14 +336,10 @@ public class GAIBA extends GA{
 		writer.writeline(line);
 
 		writer.close();
-
+		System.out.println("GA Done"+ " at: " + (new Date().getTime()- start.getTime()));
 
 	}
-	
-	private static double getLastElementIn(ArrayList<Double> ar){
-		
-		return ar.get(ar.size()-1);
-	}
+
 
 	public RuleModelIBA getBestSolutionIBA(){
 		return bestSolution;
@@ -363,11 +374,11 @@ public class GAIBA extends GA{
 				System.out.println(bestSolution);
 			}
 		}
-		
+
 		RuleModelIBA rm = testGeneration();
 		bestSolution = rm;
-		System.err.println("best solution: "  +rm.rulesToArray());
-
+//		System.err.println("best solution: "  +rm.rulesToArray());
+		System.out.println("Done"+ " at: " + (new Date().getTime()- startTime.getTime()));
 		//		generator.resetBoard();
 		//		generator.setRules(rm.getRules());
 		//		generator.start(40);

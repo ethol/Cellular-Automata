@@ -78,7 +78,7 @@ public class GA implements Runnable{
 			{1,1,2,2,3,3},
 
 	};
-	private Date startTime = new Date();
+	protected Date startTime = new Date();
 	protected double maxFitness; 
 	protected int popSize;
 	protected int maxIterations;
@@ -156,7 +156,7 @@ public class GA implements Runnable{
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
 			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
-			if(rm.getFitnessValue()>max.getFitnessValue()){
+			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
 			//			System.out.println(rm);
@@ -346,7 +346,7 @@ public class GA implements Runnable{
 			}
 
 
-//OLD mutation code(very slow)
+			//OLD mutation code(very slow)
 
 
 			/*	//			System.out.println("before " + nextGen.get(i));
@@ -448,54 +448,87 @@ public class GA implements Runnable{
 	public RuleModel getBestSolution(){
 		return bestSolution;
 	}
+	protected static double getLastElementIn(ArrayList<Double> ar){
+
+		return ar.get(ar.size()-1);
+	}
 
 
 
 
 
 	public static void main(String[] args) {
+		Date start = new Date();
 		String filesuffix = ".txt";
 		String file = "GA";
 		char tab = 9;
-		int nrOfGA = 100;
+		int nrOfGA = 10; //make sure to be div by 4 or errors .
+		int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
 		CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
 		ArrayList<GA> gaList = new ArrayList<GA>();
 
 		Thread [] tr = new Thread[nrOfGA];
-		for (int i = 0; i < nrOfGA; i++) {
-			System.out.println("trail nr:" + i);
-			GA ga = new GA(50, 100000, 2, 6, 4, true);
-			tr[i] = new Thread(ga);
-			tr[i].start();
-			gaList.add(ga);
-		}
-
-		try {
-			for (int i = 0; i < tr.length; i++) {
-				tr[i].join();
+		int k = 0;
+		while(k<nrOfGA){
+			for (int j = 0; j < MaxRunningGAAtTheTime; j++) {
+				if(k==nrOfGA) {
+					break;
+				}
+				System.out.println("trail nr:" + k);
+				GA ga = new GA(50, 100000, 2, 6, 4, true);
+				tr[k] = new Thread(ga);
+				tr[k].start();
+				gaList.add(ga);
+				k++;
+			
 			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			try {
+
+				for (int j = k-MaxRunningGAAtTheTime; j < k; j++) {
+					if(j==nrOfGA){
+						break;
+					}
+					tr[j].join();
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 
+		// finds the list with the biggest size.
+		int biggest = 0;
+		for (int i = 0; i < gaList.size(); i++){
+			if(gaList.get(i).getAvarageList().size()>biggest){
+				biggest = gaList.get(i).getAvarageList().size();
+			}
+		}
 
 		// for docu
 		String line;
 		writer.writeline("Avarage");
-		for (int i = 0; i < gaList.get(0).getAvarageList().size(); i++) {
+		for (int i = 0; i < biggest; i++) {
 			line = "";
 			for (int j = 0; j < gaList.size(); j++) {
-				line+=  gaList.get(j).getAvarageList().get(i)+ "" + tab;
+				if(gaList.get(j).getAvarageList().size()>i){
+					line+=  gaList.get(j).getAvarageList().get(i)+ "" + tab;
+				}else{
+					line+=  getLastElementIn(gaList.get(j).getAvarageList())+ ""+ tab;
+				}
 			}
 			writer.writeline(line);
 		}
 		writer.writeline("Best");
-		for (int i = 0; i < gaList.get(0).getAvarageList().size(); i++) {
+		for (int i = 0; i < biggest; i++) {
 			line = "";
 			for (int j = 0; j < gaList.size(); j++) {
-				line+=  gaList.get(j).getBestList().get(i)+ "" + tab;
+				if(gaList.get(j).getBestList().size()>i){
+					line+=  gaList.get(j).getBestList().get(i)+ "" + tab;
+				}else{
+					line+=  getLastElementIn(gaList.get(j).getBestList()) + ""  + tab;
+				}
 			}
 			writer.writeline(line);
 		}
@@ -505,13 +538,13 @@ public class GA implements Runnable{
 		writer.writeline("best rules");
 		line = "";
 		for (int j = 0; j < gaList.size(); j++) {
-			line+=  gaList.get(j).getBestSolution().rulesToBinary()+ "" + tab;
+			line+=  gaList.get(j).getBestSolution().rulesToBinary() + "" + tab;
 		}
 		writer.writeline(line);
 
 		writer.close();
 
-
+		System.out.println("GA Done"+ " at: " + (new Date().getTime()- start.getTime()));
 	}
 
 	/**
@@ -523,10 +556,14 @@ public class GA implements Runnable{
 
 
 			//					System.out.println(population);
-//			System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
+			//						System.out.println("iterate" + " at: " +  (new Date().getTime() - startTime.getTime()));
 			iterateGeneration();
-//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
+			//						System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
 			bestSolution  = testGeneration();
+			if(bestSolution.getFitnessValue()==this.maxFitness){
+				System.err.println("This thread is done." + bestSolution);
+				break;
+			}
 			//			System.out.println(population);
 			if(i%100 == 0){
 				System.out.println("this thread is " + i + " out of " + maxIterations + "runs." ) ;
@@ -536,7 +573,7 @@ public class GA implements Runnable{
 
 		RuleModel rm = testGeneration();
 		bestSolution = rm;
-
+		System.out.println("Done"+ " at: " + (new Date().getTime()- startTime.getTime()));
 		//		generator.resetBoard();
 		//		generator.setRules(rm.getRules());
 		//		generator.start(40);
