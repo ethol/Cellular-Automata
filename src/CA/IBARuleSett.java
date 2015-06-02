@@ -2,9 +2,9 @@ package CA;
 
 public class IBARuleSett {
 	public final static String  [] ruleName = {"AND", "OR", "XOR", "NOT" , "INV", "MIN", "MAX" , "SET", "INC", "DEC", "SWAP" , "ROR", "ROL", "ROU", "ROD", "NOP"};
-	private int [][] rules;
-	private int nOS; //Number of states
-	private int [] nH = new int [5]; // Neighborhood 
+	protected int [][] rules;
+	protected int nOS; //Number of states
+	protected int [] nH = new int [5]; // Neighborhood 
 	/*
 	 * 0 = L
 	 * 1 = C
@@ -32,7 +32,7 @@ public class IBARuleSett {
 		System.out.println("  "+nH[4] + "  ");
 	}
 	/*
-	 * Ever wanted to implement a RISC architecture into JAVA? Of course you have who doesen't, this is one way:
+	 * Ever wanted to implement a RISC architecture into JAVA? Of course you have! Who doesen't? this is one way:
 	 */
 	public void calculate(int rule, int op1, int op2){
 		int temp, temp2;
@@ -102,7 +102,7 @@ public class IBARuleSett {
 			nH[4] = temp;
 			nH[1] = temp2;
 			return;
-		default: //NOP
+		case 15: //NOP
 		}
 		// many of the mathimatical operations can cause overflow so modulo. also java modulo accept negative numbers which we don't want so we have to add nOS if it yields a neg. 
 		nH[op1]=nH[op1] %nOS;

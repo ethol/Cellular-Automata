@@ -30,15 +30,7 @@ public class RuleModelIBA implements Comparable {
 		return rulesToArray() + fitnessValue + "";
 	}
 	
-	final int[][] creeperEasy = new int[][]{
-			{1,1,0,0,1,1},
-			{1,1,0,0,1,1},
-			{0,0,1,1,0,0},
-			{0,1,1,1,1,0},
-			{0,1,1,1,1,0},
-			{0,1,0,0,1,0},
 
-	};
 	
 	public String rulesToArray(){
 		String returner = "";

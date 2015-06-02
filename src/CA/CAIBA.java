@@ -1,8 +1,8 @@
 package CA;
 
 public class CAIBA extends CA{
-	private int [][] insSet;
-	private int instructionSetLength;
+	protected int [][] insSet;
+	protected int instructionSetLength;
 	private IBARuleSett ibaRuleFactory;
 
 

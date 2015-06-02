@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-public class GAIBA extends GA{
+public class GAIBASM extends GA{
 	protected int numberOfInstructions;
 
-	private CAIBA generator;
+	private CAIBASM generator;
 	protected ArrayList<RuleModelIBA> population;
 	protected RuleModelIBA bestSolution;
 
-	public GAIBA(int popSize, int maxIterations, int dimentions, int boardSize,
+	public GAIBASM(int popSize, int maxIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism, int numberOfInstructions) {
 		super(popSize, maxIterations, dimentions, boardSize, numOfStates, elitism);//probbebly redundant.
 		// TODO Auto-generated constructor stub
 		this.numberOfInstructions = numberOfInstructions;
-		generator = new CAIBA(dimentions, boardSize, numOfStates, false, numberOfInstructions);
+		generator = new CAIBASM(dimentions, boardSize, numOfStates, false, numberOfInstructions);
 		population = new ArrayList<RuleModelIBA>();
 		RuleModelIBA rm;
 		for (int i = 0; i < popSize; i++) {
@@ -35,6 +35,7 @@ public class GAIBA extends GA{
 
 	}
 
+	
 	private RuleModelIBA testGeneration(){
 		RuleModelIBA rm;
 		double avarage = 0.0;
@@ -57,7 +58,7 @@ public class GAIBA extends GA{
 		avarageList.add(avarage/popSize);
 		return max;
 	}
-
+	
 	protected double  pixelFitnessFunction(int[][] rules){
 		double fitness = 0.0;
 		double maxFitness = 0.0;
@@ -84,7 +85,7 @@ public class GAIBA extends GA{
 
 		return maxFitness;
 	}
-
+	
 	private void iterateGeneration(){
 		//		for (int i = 0; i < popSize; i++) {
 		//			System.out.println(population.get(i));
@@ -156,14 +157,16 @@ public class GAIBA extends GA{
 		}
 		for (int i = ct; i < nextGen.size(); i++) {
 			//			System.out.println("before " + nextGen.get(i));
-			for (int j = 0; j < numberOfInstructions; j++) {
-				for (int j2 = 0; j2 < 3; j2++) {//FIXED TO 3. 
+			for (int j = 0; j < nextGen.get(i).getRules().length; j++) {
+				for (int j2 = 0; j2 < 5; j2++) {//FIXED TO 5. 
 
 					if(Math.random()<mutateChance){
-						if(j2!=0){
+						if(j2==0){
+							nextGen.get(i).getRules()[j][j2] = (int)(Math.random()*IBASMRuleSett.ruleNameSM.length);
+						}else if(j2<=2){
 							nextGen.get(i).getRules()[j][j2] = (int)(Math.random()*5);//FIXED to Von Neumann size 5.
 						}else{
-							nextGen.get(i).getRules()[j][j2] = (int)(Math.random()*IBARuleSett.ruleName.length);
+							nextGen.get(i).getRules()[j][j2] = (int)(Math.random()*numberOfInstructions);
 						}
 
 					}
@@ -185,18 +188,7 @@ public class GAIBA extends GA{
 		//		}
 
 	}
-
-
-
-
-	/**
-	 * random crossover
-	 * @param dad
-	 * @param mom
-	 * @return
-	 */
-
-
+	
 	/*
 	 * NOTE: take care not to crossover to much, though random position of crossing is good, to many crossings might be a bad thing.
 	 * NOTE: recalibrate and rethink this.
@@ -205,7 +197,7 @@ public class GAIBA extends GA{
 	protected RuleModelIBA crossover(RuleModelIBA dad, RuleModelIBA mom){
 
 		double crossChance = 0.10;
-		int[][] rules =generator.cloneIBARules();//will be overwritten
+		int[][] rules = new int[numberOfInstructions][5];
 		boolean dadGenes = true;
 
 		//		System.out.println("dad:" + dad.rulesToBinary());
@@ -225,9 +217,13 @@ public class GAIBA extends GA{
 				}
 
 				if(dadGenes){
+					if(!(dad.getRules().length<i)){
 					rules[i][j] = dad.getRules()[i][j];
+					}
 				}else{
+					if(!(mom.getRules().length<i)){
 					rules[i][j] = mom.getRules()[i][j];
+					}
 				}
 
 
@@ -239,28 +235,15 @@ public class GAIBA extends GA{
 		return rm;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public static void main(String[] args) {
 		Date start = new Date();
 		String filesuffix = ".txt";
-		String file = "GAIBA";
+		String file = "GAIBASM";
 		char tab = 9;
 		int nrOfGA = 100;
 		int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
 		CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
-		ArrayList<GAIBA> gaList = new ArrayList<GAIBA>();
+		ArrayList<GAIBASM> gaList = new ArrayList<GAIBASM>();
 
 		Thread [] tr = new Thread[nrOfGA];
 		int k = 0;
@@ -270,7 +253,7 @@ public class GAIBA extends GA{
 					break;
 				}
 				System.out.println("trail nr:" + k);
-				GAIBA ga = new GAIBA(50, 100000, 2, 6, 4, true, 10);
+				GAIBASM ga = new GAIBASM(50, 100000, 2, 6, 4, true, 10);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -339,8 +322,6 @@ public class GAIBA extends GA{
 		System.out.println("GA Done"+ " at: " + (new Date().getTime()- start.getTime()));
 
 	}
-
-
 	public RuleModelIBA getBestSolutionIBA(){
 		return bestSolution;
 	}
@@ -350,7 +331,6 @@ public class GAIBA extends GA{
 	public RuleModel getBestSolution(){
 		return super.getBestSolution();
 	}
-
 	/**
 	 * thread method for starting the GA.
 	 */
@@ -384,5 +364,4 @@ public class GAIBA extends GA{
 		//		generator.start(40);
 
 	}
-
 }
