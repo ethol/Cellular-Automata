@@ -54,6 +54,7 @@ public class GAIBASM extends GA{
 
 		//		System.out.println("best: "+max);
 		bestList.add(max.getFitnessValue());
+		bestSolution = max;//why suddenly not used?
 		//		System.out.println("avarage: "+ avarage/popSize);
 		avarageList.add(avarage/popSize);
 		return max;
@@ -71,7 +72,7 @@ public class GAIBASM extends GA{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==flag[i][j]){
+					if(board[i][j] ==Frenchflag[i][j]){
 						fitness++;
 					}
 				}
@@ -253,7 +254,7 @@ public class GAIBASM extends GA{
 					break;
 				}
 				System.out.println("trail nr:" + k);
-				GAIBASM ga = new GAIBASM(50, 100000, 2, 6, 4, true, 10);
+				GAIBASM ga = new GAIBASM(50, 100000, 2, 6, 3, true, 10);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -355,8 +356,8 @@ public class GAIBASM extends GA{
 			}
 		}
 
-		RuleModelIBA rm = testGeneration();
-		bestSolution = rm;
+		/*RuleModelIBA rm = testGeneration(); // seems to have caused a error.... i dont know why but best solution turns into a random solution.
+		bestSolution = rm;*/
 //		System.err.println("best solution: "  +rm.rulesToArray());
 		System.out.println("Done"+ " at: " + (new Date().getTime()- startTime.getTime()));
 		//		generator.resetBoard();

@@ -45,7 +45,7 @@ public class CA {
 			rules = new byte[numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates][numOfStates];
 		}
 		// removed as it is no longer ness. and messes with IBA
-//		setRandomRules();
+		//		setRandomRules();
 
 
 	}
@@ -155,7 +155,7 @@ public class CA {
 
 		board[(board.length/2)][board[0].length/2] = 1;
 		if(useWriter){
-		this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
+			this.out = new CAOutputWriter(dimentions, boardSize, numOfStates);
 		}
 	}
 	public void setGameOfLife(){
@@ -320,7 +320,7 @@ public class CA {
 
 	public void start(int num){
 		if(useWriter){
-		out.writeBlock(board);
+			out.writeBlock(board);
 		}
 		//	printBoard();
 		int l,r,c,u=0,d=0,ul=0,ur=0,dl=0,dr=0;
@@ -350,11 +350,11 @@ public class CA {
 			setBoard(boardNext);
 			//	printBoard();
 			if(useWriter){
-			out.writeBlock(board);
+				out.writeBlock(board);
 			}
 		}
 		if(useWriter){
-		out.close();
+			out.close();
 		}
 	}
 	public void setBoard(int[][] newBoard){

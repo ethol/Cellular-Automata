@@ -70,7 +70,7 @@ public class GAIBA extends GA{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==flag[i][j]){
+					if(board[i][j] ==Frenchflag[i][j]){
 						fitness++;
 					}
 				}
@@ -375,8 +375,8 @@ public class GAIBA extends GA{
 			}
 		}
 
-		RuleModelIBA rm = testGeneration();
-		bestSolution = rm;
+//		RuleModelIBA rm = testGeneration();
+//		bestSolution = rm;
 //		System.err.println("best solution: "  +rm.rulesToArray());
 		System.out.println("Done"+ " at: " + (new Date().getTime()- startTime.getTime()));
 		//		generator.resetBoard();

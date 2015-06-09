@@ -78,6 +78,15 @@ public class GA implements Runnable{
 			{1,1,2,2,3,3},
 
 	};
+	final int[][] Frenchflag = new int[][]{
+			{1,1,0,0,2,2},
+			{1,1,0,0,2,2},
+			{1,1,0,0,2,2},
+			{1,1,0,0,2,2},
+			{1,1,0,0,2,2},
+			{1,1,0,0,2,2},
+
+	};
 	protected Date startTime = new Date();
 	protected double maxFitness; 
 	protected int popSize;
@@ -231,7 +240,7 @@ public class GA implements Runnable{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==flag[i][j]){
+					if(board[i][j] ==Frenchflag[i][j]){
 						fitness++;
 					}
 				}
@@ -462,7 +471,7 @@ public class GA implements Runnable{
 		String filesuffix = ".txt";
 		String file = "GA";
 		char tab = 9;
-		int nrOfGA = 10; //make sure to be div by 4 or errors .
+		int nrOfGA = 100; //make sure to be div by 4 or errors .
 		int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
 		CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
 		ArrayList<GA> gaList = new ArrayList<GA>();
@@ -475,7 +484,7 @@ public class GA implements Runnable{
 					break;
 				}
 				System.out.println("trail nr:" + k);
-				GA ga = new GA(50, 100000, 2, 6, 4, true);
+				GA ga = new GA(50, 100000, 2, 6, 3, true);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -571,8 +580,8 @@ public class GA implements Runnable{
 			}
 		}
 
-		RuleModel rm = testGeneration();
-		bestSolution = rm;
+//		RuleModel rm = testGeneration();
+//		bestSolution = rm;
 		System.out.println("Done"+ " at: " + (new Date().getTime()- startTime.getTime()));
 		//		generator.resetBoard();
 		//		generator.setRules(rm.getRules());
