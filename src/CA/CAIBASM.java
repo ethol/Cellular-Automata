@@ -99,7 +99,8 @@ public class CAIBASM extends CAIBA{
 	}
 	public void setRules(int [][] insSet){
 		this.insSet = insSet;
-		ibaRuleFactory.setRules(insSet);
+		this.insSet = cloneIBARules(); // fix for problem with rulesett changing.
+		ibaRuleFactory.setRules(this.insSet);
 	}
 
 
