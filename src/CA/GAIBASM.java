@@ -1,5 +1,8 @@
 package CA;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -45,6 +48,11 @@ public class GAIBASM extends GA{
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
 			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
+//			double initial = rm.getFitnessValue();
+//			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
+//			if(initial != rm.getFitnessValue()){
+//				System.out.println("fail!");
+//			}
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -65,6 +73,8 @@ public class GAIBASM extends GA{
 		double maxFitness = 0.0;
 		generator.resetBoard();
 		generator.setRules(rules);
+		//System.out.println("1st");
+		//generator.printRules();
 		generator.start(5);
 		for (int k = 0; k < 35; k++) {
 
@@ -83,8 +93,16 @@ public class GAIBASM extends GA{
 			fitness = 0.0;
 
 		}
-
+		//System.out.println("2nd");
+		//generator.printRules();
 		return maxFitness;
+	}
+	private boolean confirmFitnessValue(RuleModelIBA rule){
+		if(rule.getFitnessValue()==pixelFitnessFunction(rule.getRules())){
+			return true;
+		}
+	
+		return false;
 	}
 	
 	private void iterateGeneration(){
@@ -98,6 +116,9 @@ public class GAIBASM extends GA{
 		Collections.sort(population);
 		if(elitism){
 			nextGen.add(population.get(0));
+			/*if(!confirmFitnessValue(population.get(0))){
+				System.out.println("elite is wong! claims:" + population.get(0).getFitnessValue() + " is:" + pixelFitnessFunction(population.get(0).getRules()));
+			};*/
 			nrBreeders-=2;
 		}
 
@@ -309,6 +330,15 @@ public class GAIBASM extends GA{
 			}
 			writer.writeline(line);
 		}
+		/*
+		 * write the num. of generations to finish. 
+		 */
+		writer.writeline("generations to finish");
+		line = "";
+		for (int j = 0; j < gaList.size(); j++) {
+			line+=  gaList.get(j).getBestList().size()+ "" + tab;
+		}
+		writer.writeline(line);
 		/*
 		 * writing the rule that had the best fitness, so i may test it. 
 		 */

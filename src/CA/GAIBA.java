@@ -64,7 +64,7 @@ public class GAIBA extends GA{
 		generator.resetBoard();
 		generator.setRules(rules);
 		generator.start(5);
-		for (int k = 0; k < 35; k++) {
+		for (int k = 0; k < 75; k++) {
 
 			generator.start(1);
 			int board[][] = generator.getBoard();
@@ -96,6 +96,9 @@ public class GAIBA extends GA{
 		Collections.sort(population);
 		if(elitism){
 			nextGen.add(population.get(0));
+			/*if(!confirmFitnessValue(population.get(0))){
+				System.out.println("elite is wong! " + population.get(0).getFitnessValue());
+			};*/
 			nrBreeders-=2;
 		}
 
@@ -243,7 +246,13 @@ public class GAIBA extends GA{
 
 
 
-
+	/*private boolean confirmFitnessValue(RuleModelIBA rule){
+		if(rule.getFitnessValue()==pixelFitnessFunction(rule.getRules())){
+			return true;
+		}
+	
+		return false;
+	}*/
 
 
 
@@ -270,7 +279,7 @@ public class GAIBA extends GA{
 					break;
 				}
 				System.out.println("trail nr:" + k);
-				GAIBA ga = new GAIBA(50, 100000, 2, 6, 4, true, 10);
+				GAIBA ga = new GAIBA(50, 100000, 2, 6, 3, true, 10);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -325,6 +334,15 @@ public class GAIBA extends GA{
 			}
 			writer.writeline(line);
 		}
+		/*
+		 * write the num. of generations to finish. 
+		 */
+		writer.writeline("generations to finish");
+		line = "";
+		for (int j = 0; j < gaList.size(); j++) {
+			line+=  gaList.get(j).getBestList().size()+ "" + tab;
+		}
+		writer.writeline(line);
 		/*
 		 * writing the rule that had the best fitness, so i may test it. 
 		 */

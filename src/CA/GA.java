@@ -542,6 +542,15 @@ public class GA implements Runnable{
 			writer.writeline(line);
 		}
 		/*
+		 * write the num. of generations to finish. 
+		 */
+		writer.writeline("generations to finish");
+		line = "";
+		for (int j = 0; j < gaList.size(); j++) {
+			line+=  gaList.get(j).getBestList().size()+ "" + tab;
+		}
+		writer.writeline(line);
+		/*
 		 * writing the rule that had the best fitness, so i may test it. 
 		 */
 		writer.writeline("best rules");
