@@ -2,7 +2,7 @@ package CA;
 
 public class runIBA {
 	final static int[][] test = new int[][]{
-		{11,1,4,},{11,4,4,},{5,3,4,},{6,1,0,},{1,3,0,},{4,3,2,},{3,2,3,},{14,0,4,},{15,0,3,},{13,1,2,},{3,0,0,},{1,2,4,},{9,0,2,},{6,2,3,},{14,4,3,},{7,2,2,},{10,0,0,},{1,2,4,},{12,1,1,},{3,1,4,},
+		{9,2,3,},{6,2,0,},{5,1,3,},{0,3,2,},{6,4,3,},{2,1,3,},{11,4,2,},{9,2,4,},{11,2,0,},{11,2,0,},
 
 
 
@@ -52,7 +52,7 @@ public class runIBA {
 		int boardSize = 6;
 		int numOfStates = 4;
 		int numberOfRuns = 40;
-		int numberofInstructions = 20;
+		int numberofInstructions = 10;
 		boolean randomStart = false;
 		boolean vonNeumannNeighbourhood = true;
 
