@@ -258,99 +258,7 @@ public class GAIBASM extends GA{
 	}
 
 	public static void main(String[] args) {
-		Date start = new Date();
-		String filesuffix = ".txt";
-		String file = "GAIBASM";
-		char tab = 9;
-		int nrOfGA = 100;
-		int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
-		CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
-		ArrayList<GAIBASM> gaList = new ArrayList<GAIBASM>();
-
-		Thread [] tr = new Thread[nrOfGA];
-		int k = 0;
-		while(k<nrOfGA){
-			for (int j = 0; j < MaxRunningGAAtTheTime; j++) {
-				if(k==nrOfGA) {
-					break;
-				}
-				System.out.println("trail nr:" + k);
-				GAIBASM ga = new GAIBASM(50, 100000, 40, 2, 6, 4, true, 10);
-				tr[k] = new Thread(ga);
-				tr[k].start();
-				gaList.add(ga);
-				k++;
-
-			}
-
-			try {
-
-				for (int j = k-MaxRunningGAAtTheTime; j < k; j++) {
-					if(j==nrOfGA){
-						break;
-					}
-					tr[j].join();
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		// finds the list with the biggest size.
-		int biggest = 0;
-		for (int i = 0; i < gaList.size(); i++){
-			if(gaList.get(i).getAvarageList().size()>biggest){
-				biggest = gaList.get(i).getAvarageList().size();
-			}
-		}
-
-		// for docu
-		String line;
-		writer.writeline("Avarage");
-		for (int i = 0; i < biggest; i++) {
-			line = "";
-			for (int j = 0; j < gaList.size(); j++) {
-				if(gaList.get(j).getAvarageList().size()>i){
-					line+=  gaList.get(j).getAvarageList().get(i)+ "" + tab;
-				}else{
-					line+=  getLastElementIn(gaList.get(j).getAvarageList())+ ""+ tab;
-				}
-			}
-			writer.writeline(line);
-		}
-		writer.writeline("Best");
-		for (int i = 0; i < biggest; i++) {
-			line = "";
-			for (int j = 0; j < gaList.size(); j++) {
-				if(gaList.get(j).getBestList().size()>i){
-					line+=  gaList.get(j).getBestList().get(i)+ "" + tab;
-				}else{
-					line+=  getLastElementIn(gaList.get(j).getBestList()) + ""  + tab;
-				}
-			}
-			writer.writeline(line);
-		}
-		/*
-		 * write the num. of generations to finish. 
-		 */
-		writer.writeline("generations to finish");
-		line = "";
-		for (int j = 0; j < gaList.size(); j++) {
-			line+=  gaList.get(j).getBestList().size()+ "" + tab;
-		}
-		writer.writeline(line);
-		/*
-		 * writing the rule that had the best fitness, so i may test it. 
-		 */
-		writer.writeline("best rules");
-		line = "";
-		for (int j = 0; j < gaList.size(); j++) {
-			line+=  gaList.get(j).getBestSolutionIBA().rulesToArray()+ "" + tab;
-		}
-		writer.writeline(line);
-
-		writer.close();
-		System.out.println("GA Done"+ " at: " + (new Date().getTime()- start.getTime()));
+		Scheduler.start();
 
 	}
 	public RuleModelIBA getBestSolutionIBA(){
@@ -393,6 +301,105 @@ public class GAIBASM extends GA{
 		//		generator.resetBoard();
 		//		generator.setRules(rm.getRules());
 		//		generator.start(40);
+		Scheduler.startAThread();
 
+	}
+	public static class Scheduler {
+		static Date start = new Date();
+		static String filesuffix = ".txt";
+		static String file = "GAIBASM";
+		static char tab = 9;
+		static int nrOfGA = 10;
+		static int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
+		static ArrayList<GAIBASM> gaList = new ArrayList<GAIBASM>();
+		
+		static Thread [] tr = new Thread[nrOfGA];
+		static int k = 0;
+		public static void start(){
+			for (int j = 0; j < MaxRunningGAAtTheTime; j++) {
+				startAThread();
+			}
+		}
+		public static void startAThread(){
+			if(k<nrOfGA){
+				System.out.println("trail nr:" + k);
+				GAIBASM ga = new GAIBASM(50, 100000, 40, 2, 6, 4, true, 10);
+				tr[k] = new Thread(ga);
+				tr[k].start();
+				gaList.add(ga);
+				k++;
+			}else{
+				/* if a thread is still running, don't do nothing foo!*/
+				int living = 0;
+						for (int i = 0; i < tr.length; i++) {
+							if(tr[i].getState()!=Thread.State.TERMINATED){
+								//System.out.println(tr[i].getState());
+								living++;
+							}
+						}
+				if(living<=1){
+					endExperiment();
+				}
+			}
+		}
+		public static void endExperiment(){
+			CAOutputWriter writer = new CAOutputWriter(file + filesuffix); 
+			// finds the list with the biggest size.
+			int biggest = 0;
+			for (int i = 0; i < gaList.size(); i++){
+				if(gaList.get(i).getAvarageList().size()>biggest){
+					biggest = gaList.get(i).getAvarageList().size();
+				}
+			}
+
+			// for docu
+			String line;
+			writer.writeline("Avarage");
+			for (int i = 0; i < biggest; i++) {
+				line = "";
+				for (int j = 0; j < gaList.size(); j++) {
+					if(gaList.get(j).getAvarageList().size()>i){
+						line+=  gaList.get(j).getAvarageList().get(i)+ "" + tab;
+					}else{
+						line+=  getLastElementIn(gaList.get(j).getAvarageList())+ ""+ tab;
+					}
+				}
+				writer.writeline(line);
+			}
+			writer.writeline("Best");
+			for (int i = 0; i < biggest; i++) {
+				line = "";
+				for (int j = 0; j < gaList.size(); j++) {
+					if(gaList.get(j).getBestList().size()>i){
+						line+=  gaList.get(j).getBestList().get(i)+ "" + tab;
+					}else{
+						line+=  getLastElementIn(gaList.get(j).getBestList()) + ""  + tab;
+					}
+				}
+				writer.writeline(line);
+			}
+			/*
+			 * write the num. of generations to finish. 
+			 */
+			writer.writeline("generations to finish");
+			line = "";
+			for (int j = 0; j < gaList.size(); j++) {
+				line+=  gaList.get(j).getBestList().size()+ "" + tab;
+			}
+			writer.writeline(line);
+			/*
+			 * writing the rule that had the best fitness, so i may test it. 
+			 */
+			writer.writeline("best rules");
+			line = "";
+			for (int j = 0; j < gaList.size(); j++) {
+				line+=  gaList.get(j).getBestSolutionIBA().rulesToArray()+ "" + tab;
+			}
+			writer.writeline(line);
+
+			writer.close();
+			System.out.println("GA Done"+ " at: " + (new Date().getTime()- start.getTime()));
+
+		}
 	}
 }
