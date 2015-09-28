@@ -11,9 +11,9 @@ public class GAIBA extends GA{
 	protected ArrayList<RuleModelIBA> population;
 	protected RuleModelIBA bestSolution;
 
-	public GAIBA(int popSize, int maxIterations, int dimentions, int boardSize,
+	public GAIBA(int popSize, int maxIterations, int maxDevIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism, int numberOfInstructions) {
-		super(popSize, maxIterations, dimentions, boardSize, numOfStates, elitism);//probbebly redundant.
+		super(popSize, maxIterations,maxDevIterations, dimentions, boardSize, numOfStates, elitism);//probbebly redundant.
 		// TODO Auto-generated constructor stub
 		this.numberOfInstructions = numberOfInstructions;
 		generator = new CAIBA(dimentions, boardSize, numOfStates, false, numberOfInstructions);
@@ -279,7 +279,7 @@ public class GAIBA extends GA{
 					break;
 				}
 				System.out.println("trail nr:" + k);
-				GAIBA ga = new GAIBA(50, 100000, 2, 6, 3, true, 10);
+				GAIBA ga = new GAIBA(50, 100000,40, 2, 6, 3, true, 10);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);

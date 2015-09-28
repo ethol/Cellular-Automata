@@ -14,9 +14,9 @@ public class GAIBASM extends GA{
 	protected ArrayList<RuleModelIBA> population;
 	protected RuleModelIBA bestSolution;
 
-	public GAIBASM(int popSize, int maxIterations, int dimentions, int boardSize,
+	public GAIBASM(int popSize, int maxIterations, int maxDevIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism, int numberOfInstructions) {
-		super(popSize, maxIterations, dimentions, boardSize, numOfStates, elitism);//probbebly redundant.
+		super(popSize, maxIterations, maxDevIterations, dimentions, boardSize, numOfStates, elitism);//probbebly redundant.
 		// TODO Auto-generated constructor stub
 		this.numberOfInstructions = numberOfInstructions;
 		generator = new CAIBASM(dimentions, boardSize, numOfStates, false, numberOfInstructions);
@@ -76,13 +76,13 @@ public class GAIBASM extends GA{
 		//System.out.println("1st");
 		//generator.printRules();
 		generator.start(5);
-		for (int k = 0; k < 35; k++) {
+		for (int k = 0; k < (maxDevIterations-5); k++) {
 
 			generator.start(1);
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==Frenchflag[i][j]){
+					if(board[i][j] ==flag[i][j]){
 						fitness++;
 					}
 				}
@@ -275,7 +275,7 @@ public class GAIBASM extends GA{
 					break;
 				}
 				System.out.println("trail nr:" + k);
-				GAIBASM ga = new GAIBASM(50, 100000, 2, 6, 3, true, 10);
+				GAIBASM ga = new GAIBASM(50, 100000, 40, 2, 6, 4, true, 10);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);

@@ -91,6 +91,7 @@ public class GA implements Runnable{
 	protected double maxFitness; 
 	protected int popSize;
 	protected int maxIterations;
+	protected int maxDevIterations;
 	protected int dimentions; 
 	protected int boardSize;
 	protected int numOfStates;
@@ -102,11 +103,12 @@ public class GA implements Runnable{
 	protected ArrayList<Double> bestList = new ArrayList<Double>();
 	protected RuleModel bestSolution;
 
-	public GA(int popSize, int maxIterations, int dimentions, int boardSize,
+	public GA(int popSize, int maxIterations,int maxDevIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism) {
 
 		this.popSize = popSize;
 		this.maxIterations = maxIterations;
+		this.maxDevIterations = maxDevIterations;
 		this.dimentions = dimentions;
 		this.boardSize = boardSize;
 		this.numOfStates = numOfStates;
@@ -234,7 +236,7 @@ public class GA implements Runnable{
 		generator.resetBoard();
 		generator.setRules(rules);
 		generator.start(5);
-		for (int k = 0; k < 35; k++) {
+		for (int k = 0; k < (maxDevIterations-5); k++) {
 
 			generator.start(1);
 			int board[][] = generator.getBoard();
@@ -484,7 +486,7 @@ public class GA implements Runnable{
 					break;
 				}
 				System.out.println("trail nr:" + k);
-				GA ga = new GA(50, 100000, 2, 6, 3, true);
+				GA ga = new GA(50, 100000,40, 2, 6, 3, true);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
