@@ -3,6 +3,7 @@ package CA;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -47,7 +48,7 @@ public class GAIBASM extends GA{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
+			rm.setFitnessValue(replicationFitnessFunction(rm.getRules(),numReplicated));
 //			double initial = rm.getFitnessValue();
 //			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
 //			if(initial != rm.getFitnessValue()){
@@ -67,8 +68,48 @@ public class GAIBASM extends GA{
 		avarageList.add(avarage/popSize);
 		return max;
 	}
+	private double replicationFitnessFunction(int[][] rules, int nrReplicated){
+		double partielFitness = 0.0;
+		double fitness= 0.0;
+		double maxFitness = 0.0;
+		ArrayList<ReplicationPartalModel> partialList = new ArrayList<ReplicationPartalModel>(); 
+		generator.setBoard(freshBoard);
+		generator.setRules(rules);
+		generator.start(5);
+		for (int k = 0; k < (maxDevIterations-5); k++) {
+			partialList = new ArrayList<ReplicationPartalModel>(); 
+
+			generator.start(1);
+			int board[][] = generator.getBoard();
+			for (int i = 0; i < board.length - target.length; i++) {
+				for (int j = 0; j < board[0].length - target[0].length; j++) {
+					partielFitness = 0.0;
+					for (int j2 = 0; j2 < target.length; j2++) {
+						for (int l = 0; l < target[0].length; l++) {
+							if(board[(i+j2)][(j+l)]==target[j2][l]){
+								partielFitness++;
+							}
+						}
+					}
+					partialList.add(new ReplicationPartalModel(i,j,partielFitness));
+				}
+			}
+			Collections.sort(partialList);
+			fitness = partialList.get(0).value;
+			fitness += partialList.get(1).value;
+			fitness += partialList.get(2).value;
+
+			if(fitness>maxFitness){
+				maxFitness=fitness;
+			}
+			fitness = 0.0;
+
+		}
+
+		return maxFitness;
+	}
 	
-	protected double  pixelFitnessFunction(int[][] rules){
+	protected double pixelFitnessFunction(int[][] rules){
 		double fitness = 0.0;
 		double maxFitness = 0.0;
 		generator.resetBoard();
@@ -307,9 +348,9 @@ public class GAIBASM extends GA{
 	public static class Scheduler {
 		static Date start = new Date();
 		static String filesuffix = ".txt";
-		static String file = "GAIBASM";
+		static String file = "GAIBASM" + new SimpleDateFormat(" HHmm dd MM yyyy").format(new Date());
 		static char tab = 9;
-		static int nrOfGA = 10;
+		static int nrOfGA = 100;
 		static int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
 		static ArrayList<GAIBASM> gaList = new ArrayList<GAIBASM>();
 		
@@ -323,7 +364,8 @@ public class GAIBASM extends GA{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GAIBASM ga = new GAIBASM(50, 100000, 40, 2, 6, 4, true, 10);
+				GAIBASM ga = new GAIBASM(50, 10000, 40, 2, 25, 4, true, 10);
+				ga.setTarget(ga.norFlagBorderd);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);

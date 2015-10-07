@@ -1,7 +1,10 @@
 package CA;
 
+import java.awt.image.ReplicateScaleFilter;
 import java.io.Writer;
 import java.lang.reflect.Array;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -60,6 +63,18 @@ public class GA implements Runnable{
 			{2,2,2,2,2,2,2,2,2,2},
 			{2,2,2,2,2,2,2,2,2,2},
 	};
+	
+	final int[][] creeperRep = new int[][]{
+			{2,2,2,2,2,2,2,2},
+			{2,1,1,2,2,1,1,2},
+			{2,1,1,2,2,1,1,2},
+			{2,2,2,1,1,2,2,2},
+			{2,2,1,1,1,1,2,2},
+			{2,2,1,1,1,1,2,2},
+			{2,2,1,2,2,1,2,2},
+			{2,2,2,2,2,2,2,2},
+	};
+	
 	final int[][] creeperEasy = new int[][]{
 			{1,1,0,0,1,1},
 			{1,1,0,0,1,1},
@@ -87,6 +102,79 @@ public class GA implements Runnable{
 			{1,1,0,0,2,2},
 
 	};
+	final int[][] simpleStructure = new int[][]{
+			{1,1,1,1,1},
+			{1,0,1,0,1},
+			{1,1,1,1,1},
+			{1,0,1,0,1},
+			{1,1,1,1,1},
+
+
+	};
+	final int[][] simpleStructureBorderd = new int[][]{
+			{0,0,0,0,0,0,0},
+			{0,1,1,1,1,1,0},
+			{0,1,0,1,0,1,0},
+			{0,1,1,1,1,1,0},
+			{0,1,0,1,0,1,0},
+			{0,1,1,1,1,1,0},
+			{0,0,0,0,0,0,0},
+
+
+	};
+	
+	final int[][] frenchFlagBorderd = new int[][]{
+			{0,0,0,0,0,0,0,0},
+			{0,1,1,0,0,2,2,0},
+			{0,1,1,0,0,2,2,0},
+			{0,1,1,0,0,2,2,0},
+			{0,1,1,0,0,2,2,0},
+			{0,1,1,0,0,2,2,0},
+			{0,1,1,0,0,2,2,0},
+			{0,0,0,0,0,0,0,0},
+
+
+	};
+	
+	final int[][] flagBorderd = new int[][]{
+			{0,0,0,0,0,0,0,0},
+			{0,1,1,2,2,3,3,0},
+			{0,1,1,2,2,3,3,0},
+			{0,1,1,2,2,3,3,0},
+			{0,1,1,2,2,3,3,0},
+			{0,1,1,2,2,3,3,0},
+			{0,1,1,2,2,3,3,0},
+			{0,0,0,0,0,0,0,0},
+
+
+	};
+	
+	final int[][] norFlagBorderd = new int[][]{
+			{0,0,0,0,0,0,0,0},
+			{0,2,0,1,0,2,2,0},
+			{0,0,0,1,0,0,0,0},
+			{0,1,1,1,1,1,1,0},
+			{0,0,0,1,0,0,0,0},
+			{0,2,0,1,0,2,2,0},
+			{0,2,0,1,0,2,2,0},
+			{0,0,0,0,0,0,0,0},
+
+
+	};
+	
+	final int[][] norFlagBigBorderd = new int[][]{
+			{0,0,0,0,0,0,0,0,0},
+			{0,1,2,3,2,1,1,1,0},
+			{0,1,2,3,2,1,1,1,0},
+			{0,2,2,3,2,2,2,2,0},
+			{0,3,3,3,3,3,3,3,0},
+			{0,2,2,3,2,2,2,2,0},
+			{0,1,2,3,2,1,1,1,0},
+			{0,1,2,3,2,1,1,1,0},
+			{0,0,0,0,0,0,0,0,0},
+
+
+	};
 	protected Date startTime = new Date();
 	protected double maxFitness; 
 	protected int popSize;
@@ -96,8 +184,11 @@ public class GA implements Runnable{
 	protected int boardSize;
 	protected int numOfStates;
 	protected boolean elitism = false;
+	protected int [][] freshBoard;
+	protected int [][] target;
 	private CA generator;
 	private ArrayList<RuleModel> population;
+	public int numReplicated = 3;
 
 	protected ArrayList<Double> avarageList = new ArrayList<Double>();
 	protected ArrayList<Double> bestList = new ArrayList<Double>();
@@ -141,6 +232,11 @@ public class GA implements Runnable{
 
 
 	}
+	public void setTarget(int [][] target){
+		this.target = target;
+		generateReplicationBoard(target);
+		this.maxFitness = target.length*target[0].length*numReplicated;
+	}
 
 	private void run(int nrOfRuns){
 		for (int i = 0; i < nrOfRuns; i++) {
@@ -166,7 +262,7 @@ public class GA implements Runnable{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
+			rm.setFitnessValue(replicationFitnessFunction(rm.getRules(),numReplicated));
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -233,6 +329,7 @@ public class GA implements Runnable{
 	private double  pixelFitnessFunction(byte[][][][][][][][][] rules){
 		double fitness = 0.0;
 		double maxFitness = 0.0;
+		ArrayList<Double> targetList = new ArrayList<Double>();
 		generator.resetBoard();
 		generator.setRules(rules);
 		generator.start(5);
@@ -242,7 +339,7 @@ public class GA implements Runnable{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==Frenchflag[i][j]){
+					if(board[i][j] ==flag[i][j]){
 						fitness++;
 					}
 				}
@@ -255,6 +352,76 @@ public class GA implements Runnable{
 		}
 
 		return maxFitness;
+	}
+
+	private double replicationFitnessFunction(byte[][][][][][][][][] rules, int nrReplicated){
+		double partielFitness = 0.0;
+		double fitness= 0.0;
+		double maxFitness = 0.0;
+		ArrayList<ReplicationPartalModel> partialList = new ArrayList<ReplicationPartalModel>(); 
+		generator.setBoard(freshBoard);
+		generator.setRules(rules);
+		generator.start(5);
+		for (int k = 0; k < (maxDevIterations-5); k++) {
+			partialList = new ArrayList<ReplicationPartalModel>(); 
+
+			generator.start(1);
+			int board[][] = generator.getBoard();
+			for (int i = 0; i < board.length - target.length; i++) {
+				for (int j = 0; j < board[0].length - target[0].length; j++) {
+					partielFitness = 0.0;
+					for (int j2 = 0; j2 < target.length; j2++) {
+						for (int l = 0; l < target[0].length; l++) {
+							if(board[(i+j2)][(j+l)]==target[j2][l]){
+								partielFitness++;
+							}
+						}
+					}
+					partialList.add(new ReplicationPartalModel(i,j,partielFitness));
+				}
+			}
+			Collections.sort(partialList);
+			fitness = partialList.get(0).value;
+			fitness += partialList.get(1).value;
+			fitness += partialList.get(2).value;
+
+			if(fitness>maxFitness){
+				maxFitness=fitness;
+			}
+			fitness = 0.0;
+
+		}
+
+		return maxFitness;
+	}
+	private double bestNoneOverlappingFitness(ArrayList<ReplicationPartalModel> partialList){
+		double fitness = 0.0;
+		ReplicationPartalModel [] used = new ReplicationPartalModel[numReplicated];
+		boolean [][] board = new boolean [boardSize][boardSize];
+		used[0] = partialList.get(0);
+		for (int i = used[0].x; i < board.length+used[0].x; i++) {
+			for (int j = used[0].y; j < board.length+used[0].y; j++) {
+				
+			}
+		}
+		
+		
+		return fitness;
+	}
+	
+
+	private void generateReplicationBoard(int [][] replicator){
+		int x = (boardSize/2) - (replicator.length/2);
+		int y = (boardSize/2) - (replicator[0].length /2);
+
+		int [][] newBoard = new int [boardSize][boardSize];
+		for (int i = x; i < x+replicator.length; i++) {
+			for (int j =y; j < y+replicator[0].length; j++) {
+				newBoard[i][j] = replicator[i-x][j-y];
+			}
+		}
+		freshBoard = newBoard;
+
 	}
 
 
@@ -515,9 +682,9 @@ public class GA implements Runnable{
 	public static class Scheduler {
 		static Date start = new Date();
 		static String filesuffix = ".txt";
-		static String file = "GA";
+		static String file = "GA" + new SimpleDateFormat(" HHmm dd MM yyyy").format(new Date());
 		static char tab = 9;
-		static int nrOfGA = 10; //make sure to be div by 4 or errors .
+		static int nrOfGA = 100; // should be larger then 3. 
 		static int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
 
 		static ArrayList<GA> gaList = new ArrayList<GA>();
@@ -531,7 +698,8 @@ public class GA implements Runnable{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GA ga = new GA(50, 10000, 40, 2, 6, 3, true);
+				GA ga = new GA(50, 10000, 40, 2, 25, 3, true);
+				ga.setTarget(ga.norFlagBorderd);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -539,12 +707,12 @@ public class GA implements Runnable{
 			}else{
 				/* if a thread is still running, don't do nothing foo!*/
 				int living = 0;
-						for (int i = 0; i < tr.length; i++) {
-							if(tr[i].getState()!=Thread.State.TERMINATED){
-								//System.out.println(tr[i].getState());
-								living++;
-							}
-						}
+				for (int i = 0; i < tr.length; i++) {
+					if(tr[i].getState()!=Thread.State.TERMINATED){
+						//System.out.println(tr[i].getState());
+						living++;
+					}
+				}
 				if(living<=1){
 					endExperiment();
 				}

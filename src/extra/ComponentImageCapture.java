@@ -4,9 +4,9 @@ package extra;
 class ComponentImageCapture {
 public static void main(String[] args) {
 
-	for (int i = 211; i < 256+211; i++) {
-//		System.out.println("=COUNTIF(A204:CV204;A" + i + ")");
-		System.out.println((-3)%2);
+	for (int i = 200006; i < 256+200006; i++) {
+		System.out.println("=COUNTIF(A200004:CV200004;A" + i + ")");
+//		System.out.println((-3)%2);
 	}
 }
 

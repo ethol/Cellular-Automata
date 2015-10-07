@@ -1,3 +1,6 @@
+# project files to ignore
+output/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
