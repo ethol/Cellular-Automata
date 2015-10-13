@@ -63,7 +63,7 @@ public class GA implements Runnable{
 			{2,2,2,2,2,2,2,2,2,2},
 			{2,2,2,2,2,2,2,2,2,2},
 	};
-	
+
 	final int[][] creeperRep = new int[][]{
 			{2,2,2,2,2,2,2,2},
 			{2,1,1,2,2,1,1,2},
@@ -74,7 +74,7 @@ public class GA implements Runnable{
 			{2,2,1,2,2,1,2,2},
 			{2,2,2,2,2,2,2,2},
 	};
-	
+
 	final int[][] creeperEasy = new int[][]{
 			{1,1,0,0,1,1},
 			{1,1,0,0,1,1},
@@ -122,7 +122,7 @@ public class GA implements Runnable{
 
 
 	};
-	
+
 	final int[][] frenchFlagBorderd = new int[][]{
 			{0,0,0,0,0,0,0,0},
 			{0,1,1,0,0,2,2,0},
@@ -135,7 +135,7 @@ public class GA implements Runnable{
 
 
 	};
-	
+
 	final int[][] flagBorderd = new int[][]{
 			{0,0,0,0,0,0,0,0},
 			{0,1,1,2,2,3,3,0},
@@ -148,7 +148,7 @@ public class GA implements Runnable{
 
 
 	};
-	
+
 	final int[][] norFlagBorderd = new int[][]{
 			{0,0,0,0,0,0,0,0},
 			{0,2,0,1,0,2,2,0},
@@ -161,7 +161,7 @@ public class GA implements Runnable{
 
 
 	};
-	
+
 	final int[][] norFlagBigBorderd = new int[][]{
 			{0,0,0,0,0,0,0,0,0},
 			{0,1,2,3,2,1,1,1,0},
@@ -172,6 +172,16 @@ public class GA implements Runnable{
 			{0,1,2,3,2,1,1,1,0},
 			{0,1,2,3,2,1,1,1,0},
 			{0,0,0,0,0,0,0,0,0},
+
+
+	};
+
+	final int[][] simpleSimpleStructureBorderd = new int[][]{
+			{0,0,0,0,0},
+			{0,1,1,1,0},
+			{0,1,0,1,0},
+			{0,1,1,1,0},
+			{0,0,0,0,0},
 
 
 	};
@@ -233,9 +243,11 @@ public class GA implements Runnable{
 
 	}
 	public void setTarget(int [][] target){
+		int [][] dot = new int[1][1];
+		dot[0][0] = 1;
 		this.target = target;
-		generateReplicationBoard(target);
-		this.maxFitness = target.length*target[0].length*numReplicated;
+		generateReplicationBoard(dot);
+		this.maxFitness = target.length*target[0].length*numReplicated*2;
 	}
 
 	private void run(int nrOfRuns){
@@ -262,7 +274,7 @@ public class GA implements Runnable{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(replicationFitnessFunction(rm.getRules(),numReplicated));
+			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(),numReplicated));
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -279,9 +291,6 @@ public class GA implements Runnable{
 
 
 	private double  majorityFitnessFunction(byte[][][][][][][][][] rules){
-
-
-
 		double fitness = 0.0;
 		int board[][] = new int [boardSize][1];
 		for (int i = 0; i < Math.pow(dimentions+1, boardSize); i++) {
@@ -321,8 +330,6 @@ public class GA implements Runnable{
 
 			//System.out.println();
 		}
-
-
 		return fitness;
 	}
 
@@ -355,21 +362,21 @@ public class GA implements Runnable{
 	}
 
 	private double replicationFitnessFunction(byte[][][][][][][][][] rules, int nrReplicated){
-		double partielFitness = 0.0;
-		double fitness= 0.0;
-		double maxFitness = 0.0;
-		ArrayList<ReplicationPartalModel> partialList = new ArrayList<ReplicationPartalModel>(); 
+		int partielFitness = 0;
+		int fitness= 0;
+		int maxFitness = 0;
+		int [] bestPartials = null;
 		generator.setBoard(freshBoard);
 		generator.setRules(rules);
 		generator.start(5);
 		for (int k = 0; k < (maxDevIterations-5); k++) {
-			partialList = new ArrayList<ReplicationPartalModel>(); 
 
 			generator.start(1);
 			int board[][] = generator.getBoard();
+			bestPartials = new int [nrReplicated];
 			for (int i = 0; i < board.length - target.length; i++) {
 				for (int j = 0; j < board[0].length - target[0].length; j++) {
-					partielFitness = 0.0;
+					partielFitness = 0;
 					for (int j2 = 0; j2 < target.length; j2++) {
 						for (int l = 0; l < target[0].length; l++) {
 							if(board[(i+j2)][(j+l)]==target[j2][l]){
@@ -377,23 +384,115 @@ public class GA implements Runnable{
 							}
 						}
 					}
-					partialList.add(new ReplicationPartalModel(i,j,partielFitness));
+					for (int j2 = 0; j2 < nrReplicated; j2++) {
+						if(bestPartials[j2]< partielFitness){
+							bestPartials[j2] = partielFitness;
+							break;
+						}
+					}
 				}
 			}
-			Collections.sort(partialList);
-			fitness = partialList.get(0).value;
-			fitness += partialList.get(1).value;
-			fitness += partialList.get(2).value;
+			for (int i = 0; i < nrReplicated; i++) {
+				fitness += bestPartials[i];
+			}
 
 			if(fitness>maxFitness){
 				maxFitness=fitness;
 			}
-			fitness = 0.0;
+			fitness = 0;
 
 		}
 
 		return maxFitness;
 	}
+	private double evoDevoFitnessFunction(byte[][][][][][][][][] rules, int nrReplicated){
+		// development
+		int partielFitness = 0;
+		int fitness= 0;
+		int maxFitness = 0;
+		int bestPartial = 0;
+		int bestDev = 0;
+		generator.setBoard(freshBoard);
+		generator.setRules(rules);
+		for (int k = 0; k < (maxDevIterations/2); k++) {
+
+			generator.start(1);
+			int board[][] = generator.getBoard();
+			bestPartial = 0;
+			for (int i = 0; i < board.length - target.length; i++) {
+				for (int j = 0; j < board[0].length - target[0].length; j++) {
+					partielFitness = 0;
+					for (int j2 = 0; j2 < target.length; j2++) {
+						for (int l = 0; l < target[0].length; l++) {
+							if(board[(i+j2)][(j+l)]==target[j2][l]){
+								partielFitness++;
+							}
+						}
+					}
+					if(bestPartial< partielFitness){
+						bestPartial = partielFitness;
+					}
+				}
+			}
+				fitness += bestPartial;
+
+			if(fitness>maxFitness){
+				maxFitness=fitness;
+				bestDev = k;
+			}
+			fitness = 0;
+			if(maxFitness==target.length*target[0].length){
+				break;
+			}
+
+		}
+
+		// replication
+		int partielFitnessRep = 0;
+		int fitnessRep= 0;
+		int maxFitnessRep = 0;
+		int [] bestPartialsRep = null;
+
+		generator.setBoard(freshBoard);
+		generator.start(bestDev);
+		for (int k = 0; k < (maxDevIterations/2); k++) {
+			
+			generator.start(1);
+			int board[][] = generator.getBoard();
+			bestPartialsRep = new int [nrReplicated];
+			for (int i = 0; i < board.length - target.length; i++) {
+				for (int j = 0; j < board[0].length - target[0].length; j++) {
+					partielFitnessRep = 0;
+					for (int j2 = 0; j2 < target.length; j2++) {
+						for (int l = 0; l < target[0].length; l++) {
+							if(board[(i+j2)][(j+l)]==target[j2][l]){
+								partielFitnessRep++;
+							}
+						}
+					}
+					for (int j2 = 0; j2 < nrReplicated; j2++) {
+						if(bestPartialsRep[j2]< partielFitnessRep){
+							bestPartialsRep[j2] = partielFitnessRep;
+							break;
+						}
+					}
+				}
+			}
+			for (int i = 0; i < nrReplicated; i++) {
+				fitnessRep += bestPartialsRep[i];
+			}
+
+			if(fitnessRep>maxFitnessRep){
+				maxFitnessRep=fitnessRep;
+			}
+			fitnessRep = 0;
+
+		}
+
+		return maxFitnessRep + (maxFitness*nrReplicated);
+	}
+
+
 	private double bestNoneOverlappingFitness(ArrayList<ReplicationPartalModel> partialList){
 		double fitness = 0.0;
 		ReplicationPartalModel [] used = new ReplicationPartalModel[numReplicated];
@@ -401,14 +500,14 @@ public class GA implements Runnable{
 		used[0] = partialList.get(0);
 		for (int i = used[0].x; i < board.length+used[0].x; i++) {
 			for (int j = used[0].y; j < board.length+used[0].y; j++) {
-				
+
 			}
 		}
-		
-		
+
+
 		return fitness;
 	}
-	
+
 
 	private void generateReplicationBoard(int [][] replicator){
 		int x = (boardSize/2) - (replicator.length/2);
@@ -698,8 +797,8 @@ public class GA implements Runnable{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GA ga = new GA(50, 10000, 40, 2, 25, 3, true);
-				ga.setTarget(ga.norFlagBorderd);
+				GA ga = new GA(50, 10000, 40, 2, 25, 2, true);
+				ga.setTarget(ga.simpleSimpleStructureBorderd);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);

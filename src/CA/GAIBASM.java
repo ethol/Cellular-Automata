@@ -48,7 +48,7 @@ public class GAIBASM extends GA{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(replicationFitnessFunction(rm.getRules(),numReplicated));
+			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(),numReplicated));
 //			double initial = rm.getFitnessValue();
 //			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
 //			if(initial != rm.getFitnessValue()){
@@ -69,21 +69,21 @@ public class GAIBASM extends GA{
 		return max;
 	}
 	private double replicationFitnessFunction(int[][] rules, int nrReplicated){
-		double partielFitness = 0.0;
-		double fitness= 0.0;
-		double maxFitness = 0.0;
-		ArrayList<ReplicationPartalModel> partialList = new ArrayList<ReplicationPartalModel>(); 
+		int partielFitness = 0;
+		int fitness= 0;
+		int maxFitness = 0;
+		int [] bestPartials = new int [nrReplicated];
 		generator.setBoard(freshBoard);
 		generator.setRules(rules);
 		generator.start(5);
 		for (int k = 0; k < (maxDevIterations-5); k++) {
-			partialList = new ArrayList<ReplicationPartalModel>(); 
 
 			generator.start(1);
 			int board[][] = generator.getBoard();
+			bestPartials = new int [nrReplicated];
 			for (int i = 0; i < board.length - target.length; i++) {
 				for (int j = 0; j < board[0].length - target[0].length; j++) {
-					partielFitness = 0.0;
+					partielFitness = 0;
 					for (int j2 = 0; j2 < target.length; j2++) {
 						for (int l = 0; l < target[0].length; l++) {
 							if(board[(i+j2)][(j+l)]==target[j2][l]){
@@ -91,18 +91,23 @@ public class GAIBASM extends GA{
 							}
 						}
 					}
-					partialList.add(new ReplicationPartalModel(i,j,partielFitness));
+					for (int j2 = 0; j2 < nrReplicated; j2++) {
+						if(bestPartials[j2]< partielFitness){
+							bestPartials[j2] = partielFitness;
+							break;
+						}
+					}
 				}
 			}
-			Collections.sort(partialList);
-			fitness = partialList.get(0).value;
-			fitness += partialList.get(1).value;
-			fitness += partialList.get(2).value;
-
+			fitness = 0;
+			for (int i = 0; i < nrReplicated; i++) {
+				fitness += bestPartials[i];
+				
+			}
 			if(fitness>maxFitness){
 				maxFitness=fitness;
 			}
-			fitness = 0.0;
+			
 
 		}
 
@@ -137,6 +142,94 @@ public class GAIBASM extends GA{
 		//System.out.println("2nd");
 		//generator.printRules();
 		return maxFitness;
+	}
+	
+	private double evoDevoFitnessFunction(int [][] rules, int nrReplicated){
+		// development
+		int partielFitness = 0;
+		int fitness= 0;
+		int maxFitness = 0;
+		int bestPartial = 0;
+		int bestDev = 0;
+		generator.setBoard(freshBoard);
+		generator.setRules(rules);
+		for (int k = 0; k < (maxDevIterations/2); k++) {
+
+			generator.start(1);
+			int board[][] = generator.getBoard();
+			bestPartial = 0;
+			for (int i = 0; i < board.length - target.length; i++) {
+				for (int j = 0; j < board[0].length - target[0].length; j++) {
+					partielFitness = 0;
+					for (int j2 = 0; j2 < target.length; j2++) {
+						for (int l = 0; l < target[0].length; l++) {
+							if(board[(i+j2)][(j+l)]==target[j2][l]){
+								partielFitness++;
+							}
+						}
+					}
+					if(bestPartial< partielFitness){
+						bestPartial = partielFitness;
+					}
+				}
+			}
+				fitness += bestPartial;
+
+			if(fitness>maxFitness){
+				maxFitness=fitness;
+				bestDev = k;
+			}
+			fitness = 0;
+			if(maxFitness==target.length*target[0].length){
+				break;
+			}
+
+		}
+
+		// replication
+		int partielFitnessRep = 0;
+		int fitnessRep= 0;
+		int maxFitnessRep = 0;
+		int [] bestPartialsRep = null;
+		generator.setBoard(freshBoard);
+		generator.setRules(rules);
+		generator.start(bestDev);
+		
+		for (int k = 0; k < (maxDevIterations/2); k++) {
+
+			generator.start(1);
+			int board[][] = generator.getBoard();
+			bestPartialsRep = new int [nrReplicated];
+			for (int i = 0; i < board.length - target.length; i++) {
+				for (int j = 0; j < board[0].length - target[0].length; j++) {
+					partielFitnessRep = 0;
+					for (int j2 = 0; j2 < target.length; j2++) {
+						for (int l = 0; l < target[0].length; l++) {
+							if(board[(i+j2)][(j+l)]==target[j2][l]){
+								partielFitnessRep++;
+							}
+						}
+					}
+					for (int j2 = 0; j2 < nrReplicated; j2++) {
+						if(bestPartialsRep[j2]< partielFitnessRep){
+							bestPartialsRep[j2] = partielFitnessRep;
+							break;
+						}
+					}
+				}
+			}
+			for (int i = 0; i < nrReplicated; i++) {
+				fitnessRep += bestPartialsRep[i];
+			}
+
+			if(fitnessRep>maxFitnessRep){
+				maxFitnessRep=fitnessRep;
+			}
+			fitnessRep = 0;
+
+		}
+
+		return maxFitnessRep + (maxFitness*nrReplicated);
 	}
 	private boolean confirmFitnessValue(RuleModelIBA rule){
 		if(rule.getFitnessValue()==pixelFitnessFunction(rule.getRules())){
@@ -364,8 +457,8 @@ public class GAIBASM extends GA{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GAIBASM ga = new GAIBASM(50, 10000, 40, 2, 25, 4, true, 10);
-				ga.setTarget(ga.norFlagBorderd);
+				GAIBASM ga = new GAIBASM(50, 10000, 40, 2, 30, 2, true, 10);
+				ga.setTarget(ga.simpleStructureBorderd);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
