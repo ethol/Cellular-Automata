@@ -15,7 +15,7 @@ public class iterationsToFinishSMIBA {
 			"1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 "
 			;
 
-	final static int[][][] test = new int[][][]{
+	final static byte[][][] test = new byte[][][]{
 		{{0,3,1,6,8,},{12,3,4,0,3,},{0,4,3,0,4,},{0,4,1,9,8,},{8,1,2,7,2,},{18,0,0,8,7,},{6,4,2,2,4,},{14,1,4,0,2,},{2,3,4,9,3,},{5,1,3,6,6,},},
 		{{0,1,4,1,7,},{9,1,1,3,8,},{1,3,2,0,0,},{16,2,4,4,6,},{20,1,2,4,3,},{1,4,2,2,2,},{4,3,1,2,4,},{17,0,0,8,2,},{4,3,2,6,8,},{2,1,3,3,0,},},
 		{{12,4,3,3,9,},{18,3,3,8,2,},{8,2,2,9,2,},{6,2,0,7,0,},{8,1,4,7,8,},{12,1,0,4,4,},{1,1,4,1,1,},{15,1,0,3,7,},{6,0,0,3,3,},{8,0,0,6,6,},},
@@ -206,12 +206,12 @@ public class iterationsToFinishSMIBA {
 		return Math.sqrt(sumMeanSquared/set.size());
 	}
 	
-	public static String rulesToArray(int [][] rules){
+	public static String rulesToArray(byte[][] test2){
 		String returner = "";
-		for (int i = 0; i < rules.length; i++) {
+		for (int i = 0; i < test2.length; i++) {
 			returner += "{";
-			for (int j = 0; j < rules[0].length; j++) {
-				returner += rules[i][j] + ",";
+			for (int j = 0; j < test2[0].length; j++) {
+				returner += test2[i][j] + ",";
 			}
 			returner += "},";
 		}
