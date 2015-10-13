@@ -2,7 +2,7 @@ package CA;
 
 public class IBARuleSett {
 	public final static String  [] ruleName = {"AND", "OR", "XOR", "NOT" , "INV", "MIN", "MAX" , "SET", "INC", "DEC", "SWAP" , "ROR", "ROL", "ROU", "ROD", "NOP"};
-	protected int [][] rules;
+	protected byte [][] rules;
 	protected int nOS; //Number of states
 	protected int [] nH = new int [5]; // Neighborhood 
 	/*
@@ -16,14 +16,14 @@ public class IBARuleSett {
 	public IBARuleSett(int nOS){
 		this.nOS = nOS;
 	}
-	public int preformRules(int [] nH){
-		this.nH = nH;
+	public int preformRules(int[] bs){
+		this.nH = bs;
 //		printNH();
 		for (int i = 0; i < rules.length; i++) {
 			calculate(rules[i][0], rules[i][1], rules[i][2]);//makes strong assumptions of rules array. 
 		}
 //		printNH();
-		return nH[1];
+		return bs[1];
 	}
 	
 	public void printNH(){
@@ -34,7 +34,7 @@ public class IBARuleSett {
 	/*
 	 * Ever wanted to implement a RISC architecture into JAVA? Of course you have! Who doesen't? this is one way:
 	 */
-	public void calculate(int rule, int op1, int op2){
+	public void calculate(byte rule, byte op1, byte op2){
 		int temp, temp2;
 	//	System.out.println(ruleName[rule]);
 //		System.out.println("rule" + rule);
@@ -43,7 +43,7 @@ public class IBARuleSett {
 			nH[op1] = nH[op1] & nH[op2] ; 	
 			break;
 		case 1: //OR
-			nH[op1] = nH[op1] | nH[op2] ; 	
+			nH[op1] =  nH[op1] | nH[op2] ; 	
 			break;
 		case 2: //XOR
 			nH[op1] = nH[op1] ^ nH[op2] ;
@@ -112,10 +112,10 @@ public class IBARuleSett {
 	}
 	
 	
-	public int[][] getRules() {
+	public byte[][] getRules() {
 		return rules;
 	}
-	public void setRules(int[][] rules) {
+	public void setRules(byte[][] rules) {
 		this.rules = rules;
 		if(rules[0].length!=3){
 			System.err.println("NAIN! DAS RULES BIST NICHT SO LANG YA!");

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class IBASMRuleSett extends IBARuleSett{
 	public final static String  [] ruleNameSM = {"AND", "OR", "XOR", "NOT" , "INV", "MIN", "MAX" , "SET", "INC", "DEC", "SWAP" , "ROR", "ROL", "ROU", "ROD", "NOP", "SKIP", "MOVE", "DUPE", "DEL", "CHF", "CHP",};
-	private ArrayList<int []> toDo = new ArrayList<int []>();
+	private ArrayList<byte []> toDo = new ArrayList<byte []>();
 	int skipCounter = 0;//goTo command
 	int maxInstructionLength;
 	boolean preformSM = false;
@@ -42,7 +42,7 @@ public class IBASMRuleSett extends IBARuleSett{
 	 * adds the SM rules to the ToDo list.
 	 */
 
-	public boolean calculateSM(int rule, int op1, int op2){
+	public boolean calculateSM(byte rule, byte op1, byte op2){
 		super.calculate(rule, op1, op2);
 
 		switch(rule){
@@ -65,11 +65,11 @@ public class IBASMRuleSett extends IBARuleSett{
 	 * Performs the selfModification of the rule set
 	 */
 	private void selfModify(){
-		ArrayList<int []> nextIns = new ArrayList<int []>();
+		ArrayList<byte []> nextIns = new ArrayList<byte []>();
 		for (int i = 0; i < rules.length; i++) {
 			nextIns.add(rules[i]);
 		}
-		int [] rule ;
+		byte [] rule ;
 		while(!toDo.isEmpty()){
 			rule = toDo.remove(0);
 			//			System.out.println(ruleNameSM[rule[0]]);
@@ -81,7 +81,7 @@ public class IBASMRuleSett extends IBARuleSett{
 					//						nextIns.add( nextIns.remove(rule[3]));
 					//						break;
 					//					}
-					int [] temp = nextIns.remove(rule[3]);
+					byte [] temp = nextIns.remove(rule[3]);
 					if(nextIns.size()<rule[4]){
 						nextIns.add(temp);//add it to the end
 						break;
@@ -118,9 +118,9 @@ public class IBASMRuleSett extends IBARuleSett{
 			}//endif
 		}//endwhile
 		if(nextIns.size()<maxInstructionLength){
-			rules = new int [nextIns.size()][5];
+			rules = new byte [nextIns.size()][5];
 		}else{
-			rules = new int [maxInstructionLength][5];
+			rules = new byte [maxInstructionLength][5];
 		}
 		//		System.out.println(nextIns.size());
 		for (int i = 0; i < rules.length; i++) {
@@ -131,7 +131,7 @@ public class IBASMRuleSett extends IBARuleSett{
 		//		printRules();
 	}
 	@Override
-	public void setRules(int[][] rules) {
+	public void setRules(byte[][] rules) {
 		this.rules = rules;
 		if(rules[0].length!=5){
 			System.err.println("NEIN!");
@@ -145,7 +145,7 @@ public class IBASMRuleSett extends IBARuleSett{
 	public void preformSMNext(){
 		preformSM = true;
 	}
-	public int[][] getRules(){
+	public byte[][] getRules(){
 		return rules;
 	}
 }

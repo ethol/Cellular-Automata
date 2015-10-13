@@ -68,7 +68,7 @@ public class GAIBASM extends GA{
 		avarageList.add(avarage/popSize);
 		return max;
 	}
-	private double replicationFitnessFunction(int[][] rules, int nrReplicated){
+	private double replicationFitnessFunction(byte[][] rules, int nrReplicated){
 		int partielFitness = 0;
 		int fitness= 0;
 		int maxFitness = 0;
@@ -114,7 +114,7 @@ public class GAIBASM extends GA{
 		return maxFitness;
 	}
 	
-	protected double pixelFitnessFunction(int[][] rules){
+	protected double pixelFitnessFunction(byte[][] rules){
 		double fitness = 0.0;
 		double maxFitness = 0.0;
 		generator.resetBoard();
@@ -144,7 +144,7 @@ public class GAIBASM extends GA{
 		return maxFitness;
 	}
 	
-	private double evoDevoFitnessFunction(int [][] rules, int nrReplicated){
+	private double evoDevoFitnessFunction(byte [][] rules, int nrReplicated){
 		// development
 		int partielFitness = 0;
 		int fitness= 0;
@@ -318,11 +318,11 @@ public class GAIBASM extends GA{
 
 					if(Math.random()<mutateChance){
 						if(j2==0){
-							nextGen.get(i).getRules()[j][j2] = (int)(Math.random()*IBASMRuleSett.ruleNameSM.length);
+							nextGen.get(i).getRules()[j][j2] = (byte)(Math.random()*IBASMRuleSett.ruleNameSM.length);
 						}else if(j2<=2){
-							nextGen.get(i).getRules()[j][j2] = (int)(Math.random()*5);//FIXED to Von Neumann size 5.
+							nextGen.get(i).getRules()[j][j2] = (byte)(Math.random()*5);//FIXED to Von Neumann size 5.
 						}else{
-							nextGen.get(i).getRules()[j][j2] = (int)(Math.random()*numberOfInstructions);
+							nextGen.get(i).getRules()[j][j2] = (byte)(Math.random()*numberOfInstructions);
 						}
 
 					}
@@ -353,7 +353,7 @@ public class GAIBASM extends GA{
 	protected RuleModelIBA crossover(RuleModelIBA dad, RuleModelIBA mom){
 
 		double crossChance = 0.10;
-		int[][] rules = new int[numberOfInstructions][5];
+		byte[][] rules = new byte[numberOfInstructions][5];
 		boolean dadGenes = true;
 
 		//		System.out.println("dad:" + dad.rulesToBinary());

@@ -7,18 +7,18 @@ public class CAIBASM extends CAIBA{
 			int instructionSetLength) {
 		super(dimentions, boardSize, numOfStates, ran, instructionSetLength);
 		ibaRuleFactory = new IBASMRuleSett(numOfStates, instructionSetLength);
-		insSet = new int[instructionSetLength][5];
+		insSet = new byte[instructionSetLength][5];
 	}
 
 
 	@Override
 	public void setRandomRules(){
 		for (int i = 0; i < insSet.length; i++) {
-			insSet[i][0] = (int) (Math.random()*IBASMRuleSett.ruleNameSM.length); 
-			insSet[i][1] = (int) (Math.random()*5);
-			insSet[i][2] = (int) (Math.random()*5);
-			insSet[i][3] = (int) (Math.random()*instructionSetLength);
-			insSet[i][4] = (int) (Math.random()*instructionSetLength);
+			insSet[i][0] = (byte) (Math.random()*IBASMRuleSett.ruleNameSM.length); 
+			insSet[i][1] = (byte) (Math.random()*5);
+			insSet[i][2] = (byte) (Math.random()*5);
+			insSet[i][3] = (byte) (Math.random()*instructionSetLength);
+			insSet[i][4] = (byte) (Math.random()*instructionSetLength);
 
 
 
@@ -77,11 +77,11 @@ public class CAIBASM extends CAIBA{
 
 	}
 	@Override
-	public int[][] cloneIBARules() {
+	public byte[][] cloneIBARules() {
 		if(insSet.length == 0){//nullpointer 
 			return null;
 		}
-		int [][] returner = new int [insSet.length][insSet[0].length];
+		byte [][] returner = new byte [insSet.length][insSet[0].length];
 		for (int i = 0; i < insSet.length; i++) {
 			for (int j = 0; j < insSet[0].length; j++) {
 				returner[i][j] = insSet[i][j];
@@ -97,7 +97,7 @@ public class CAIBASM extends CAIBA{
 			System.out.println(IBASMRuleSett.ruleNameSM[insSet[i][0]] + ", op1: " + insSet[i][1] +  ", op2: " + insSet[i][2]+  ", op3: " + insSet[i][3]+  ", op4: " + insSet[i][4]);
 		}
 	}
-	public void setRules(int [][] insSet){
+	public void setRules(byte [][] insSet){
 		this.insSet = insSet;
 		this.insSet = cloneIBARules(); // fix for problem with rulesett changing.
 		ibaRuleFactory.setRules(this.insSet);

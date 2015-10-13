@@ -1,7 +1,7 @@
 package CA;
 
 public class CAIBA extends CA{
-	protected int [][] insSet;
+	protected byte [][] insSet;
 	protected int instructionSetLength;
 	private IBARuleSett ibaRuleFactory;
 
@@ -9,7 +9,7 @@ public class CAIBA extends CA{
 	public CAIBA(int dimentions, int boardSize, int numOfStates, boolean ran, int instructionSetLength) {
 		super(dimentions, boardSize, numOfStates, ran, true);//sets Von Neumann neighborhood to true, as CAIBA has not ben set up to work with moores yet.
 		this.instructionSetLength= instructionSetLength; 
-		insSet = new int[instructionSetLength][3];
+		insSet = new byte[instructionSetLength][3];
 		ibaRuleFactory = new IBARuleSett(numOfStates);
 
 	}
@@ -19,9 +19,9 @@ public class CAIBA extends CA{
 	@Override
 	public void setRandomRules(){
 		for (int i = 0; i < insSet.length; i++) {
-			insSet[i][0] = (int) (Math.random()*IBARuleSett.ruleName.length); 
-			insSet[i][1] = (int) (Math.random()*5);
-			insSet[i][2] = (int) (Math.random()*5);
+			insSet[i][0] = (byte) (Math.random()*IBARuleSett.ruleName.length); 
+			insSet[i][1] = (byte) (Math.random()*5);
+			insSet[i][2] = (byte) (Math.random()*5);
 		}
 		ibaRuleFactory.setRules(insSet);
 
@@ -70,7 +70,7 @@ public class CAIBA extends CA{
 	}
 
 
-	public void setRules(int [][] insSet){
+	public void setRules(byte [][] insSet){
 		this.insSet = insSet;
 		ibaRuleFactory.setRules(insSet);
 	}
@@ -82,8 +82,8 @@ public class CAIBA extends CA{
 	}
 	
 	
-	public int[][] cloneIBARules() {
-		int [][] returner = new int [insSet.length][insSet[0].length];
+	public byte[][] cloneIBARules() {
+		byte [][] returner = new byte [insSet.length][insSet[0].length];
 		for (int i = 0; i < insSet.length; i++) {
 			for (int j = 0; j < insSet[0].length; j++) {
 				returner[i][j] = insSet[i][j];

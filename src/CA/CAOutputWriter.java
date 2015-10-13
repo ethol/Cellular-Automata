@@ -42,7 +42,7 @@ public class CAOutputWriter {
 	
 
 
-	public void writeBlock(int board[][]){
+	public void writeBlock(int[][] board){
 		writer.println(boardToString(board));
 
 
@@ -51,7 +51,7 @@ public class CAOutputWriter {
 		writer.println(line);
 	}
 
-	private String boardToString(int board[][]){
+	private String boardToString(int[][] board){
 		String result = "";
 		for (int i = 0; i < board[0].length; i++) {
 			for (int j = 0; j < board.length; j++) {
