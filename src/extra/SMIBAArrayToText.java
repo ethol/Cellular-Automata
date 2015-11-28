@@ -4,7 +4,7 @@ import CA.IBASMRuleSett;
 
 public class SMIBAArrayToText {
 	final static int[][] test = new int[][]{
-		{2,2,0,5,2,},{2,3,4,5,1,},{14,4,4,0,2,},{2,2,1,8,7,},{6,2,1,4,4,},{17,3,2,2,8,},{7,0,0,0,1,},{21,0,3,1,1,},{2,3,2,4,3,},{5,1,2,8,6,},
+		{1,2,4,7,0,},{3,4,3,0,9,},{17,4,4,4,8,},{5,0,4,5,5,},{0,0,1,7,6,},{8,1,1,5,5,},{1,4,0,8,5,},{11,1,1,8,5,},{12,3,2,5,3,},{17,0,1,2,6,},
 
 	};
 	final static char[] op = new char[]{
@@ -27,7 +27,8 @@ public class SMIBAArrayToText {
 			st += ", " + op[test[i][2]];
 			st += ", " + test[i][3];
 			st += ", " + test[i][4]+ "),";
-			System.out.println(st);
+			System.out.print(st);
+			//System.out.println();
 		}
 	}
 

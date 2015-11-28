@@ -16,6 +16,7 @@ public class GAIBA extends GA{
 	protected ArrayList<RuleModelIBA> population;
 	protected RuleModelIBA bestSolution;
 
+
 	public GAIBA(int popSize, int maxIterations, int maxDevIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism, int numberOfInstructions) {
 		super(popSize, maxIterations,maxDevIterations, dimentions, boardSize, numOfStates, elitism);//probbebly redundant.
@@ -48,7 +49,7 @@ public class GAIBA extends GA{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(),numReplicated));
+			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(), numReplicated));
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -59,7 +60,7 @@ public class GAIBA extends GA{
 		//		System.out.println("best: "+max);
 		bestList.add(max.getFitnessValue());
 		//		System.out.println("avarage: "+ avarage/popSize);
-		avarageList.add(avarage/popSize);
+		//avarageList.add(avarage/popSize);
 		return max;
 	}
 
@@ -75,7 +76,7 @@ public class GAIBA extends GA{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==Frenchflag[i][j]){
+					if(board[i][j] ==target[i][j]){
 						fitness++;
 					}
 				}
@@ -183,7 +184,7 @@ public class GAIBA extends GA{
 		int [] bestPartialsRep = null;
 	
 		generator.setBoard(freshBoard);
-		generator.start(bestDev);
+		generator.start(bestDev + 1);
 		for (int k = 0; k < (maxDevIterations/2); k++) {
 
 			generator.start(1);
@@ -407,6 +408,9 @@ public class GAIBA extends GA{
 		return bestSolution;
 	}
 
+	public ArrayList<RuleModelIBA> getPopulationIBA() {
+		return population;
+	}
 
 	@Deprecated
 	public RuleModel getBestSolution(){
@@ -472,8 +476,8 @@ public class GAIBA extends GA{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GAIBA ga = new GAIBA(50, 10000,40, 2, 25, 2, true, 10);
-				ga.setTarget(ga.simpleSimpleStructureBorderd);
+				GAIBA ga = new GAIBA(50, 10000,40, 2, 30, 3, true, 10);
+				ga.setTarget(ga.frenchFlagBorderd);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -497,14 +501,14 @@ public class GAIBA extends GA{
 			// finds the list with the biggest size.
 			int biggest = 0;
 			for (int i = 0; i < gaList.size(); i++){
-				if(gaList.get(i).getAvarageList().size()>biggest){
-					biggest = gaList.get(i).getAvarageList().size();
+				if(gaList.get(i).getBestList().size()>biggest){
+					biggest = gaList.get(i).getBestList().size();
 				}
 			}
 
 			// for docu
 			String line;
-			writer.writeline("Avarage");
+			/*writer.writeline("Avarage");
 			for (int i = 0; i < biggest; i++) {
 				line = "";
 				for (int j = 0; j < gaList.size(); j++) {
@@ -515,7 +519,7 @@ public class GAIBA extends GA{
 					}
 				}
 				writer.writeline(line);
-			}
+			}*/
 			writer.writeline("Best");
 			for (int i = 0; i < biggest; i++) {
 				line = "";

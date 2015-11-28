@@ -39,7 +39,7 @@ public class GAIBASM extends GA{
 
 	}
 
-	
+
 	private RuleModelIBA testGeneration(){
 		RuleModelIBA rm;
 		double avarage = 0.0;
@@ -48,12 +48,12 @@ public class GAIBASM extends GA{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(),numReplicated));
-//			double initial = rm.getFitnessValue();
-//			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
-//			if(initial != rm.getFitnessValue()){
-//				System.out.println("fail!");
-//			}
+			rm.setFitnessValue(replicationFitnessFunction(rm.getRules(), numReplicated));
+			//			double initial = rm.getFitnessValue();
+			//			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
+			//			if(initial != rm.getFitnessValue()){
+			//				System.out.println("fail!");
+			//			}
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -65,7 +65,7 @@ public class GAIBASM extends GA{
 		bestList.add(max.getFitnessValue());
 		bestSolution = max;//why suddenly not used?
 		//		System.out.println("avarage: "+ avarage/popSize);
-		avarageList.add(avarage/popSize);
+		//avarageList.add(avarage/popSize);
 		return max;
 	}
 	private double replicationFitnessFunction(byte[][] rules, int nrReplicated){
@@ -102,18 +102,18 @@ public class GAIBASM extends GA{
 			fitness = 0;
 			for (int i = 0; i < nrReplicated; i++) {
 				fitness += bestPartials[i];
-				
+
 			}
 			if(fitness>maxFitness){
 				maxFitness=fitness;
 			}
-			
+
 
 		}
 
 		return maxFitness;
 	}
-	
+
 	protected double pixelFitnessFunction(byte[][] rules){
 		double fitness = 0.0;
 		double maxFitness = 0.0;
@@ -128,7 +128,7 @@ public class GAIBASM extends GA{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==flag[i][j]){
+					if(board[i][j] == target[i][j]){
 						fitness++;
 					}
 				}
@@ -143,7 +143,7 @@ public class GAIBASM extends GA{
 		//generator.printRules();
 		return maxFitness;
 	}
-	
+
 	private double evoDevoFitnessFunction(byte [][] rules, int nrReplicated){
 		// development
 		int partielFitness = 0;
@@ -154,7 +154,6 @@ public class GAIBASM extends GA{
 		generator.setBoard(freshBoard);
 		generator.setRules(rules);
 		for (int k = 0; k < (maxDevIterations/2); k++) {
-
 			generator.start(1);
 			int board[][] = generator.getBoard();
 			bestPartial = 0;
@@ -173,7 +172,7 @@ public class GAIBASM extends GA{
 					}
 				}
 			}
-				fitness += bestPartial;
+			fitness += bestPartial;
 
 			if(fitness>maxFitness){
 				maxFitness=fitness;
@@ -193,8 +192,8 @@ public class GAIBASM extends GA{
 		int [] bestPartialsRep = null;
 		generator.setBoard(freshBoard);
 		generator.setRules(rules);
-		generator.start(bestDev);
-		
+		generator.start(bestDev +1);
+
 		for (int k = 0; k < (maxDevIterations/2); k++) {
 
 			generator.start(1);
@@ -226,7 +225,6 @@ public class GAIBASM extends GA{
 				maxFitnessRep=fitnessRep;
 			}
 			fitnessRep = 0;
-
 		}
 
 		return maxFitnessRep + (maxFitness*nrReplicated);
@@ -235,10 +233,9 @@ public class GAIBASM extends GA{
 		if(rule.getFitnessValue()==pixelFitnessFunction(rule.getRules())){
 			return true;
 		}
-	
 		return false;
 	}
-	
+
 	private void iterateGeneration(){
 		//		for (int i = 0; i < popSize; i++) {
 		//			System.out.println(population.get(i));
@@ -297,11 +294,7 @@ public class GAIBASM extends GA{
 
 		for (int i = 0; i < nrBreeders; i+=2) {
 			nextGen.add(crossover(breeders.get(i), breeders.get(i+1)));
-
-
-
 		}
-
 
 		/*
 		 * muation
@@ -344,7 +337,7 @@ public class GAIBASM extends GA{
 		//		}
 
 	}
-	
+
 	/*
 	 * NOTE: take care not to crossover to much, though random position of crossing is good, to many crossings might be a bad thing.
 	 * NOTE: recalibrate and rethink this.
@@ -374,11 +367,11 @@ public class GAIBASM extends GA{
 
 				if(dadGenes){
 					if(!(dad.getRules().length<i)){
-					rules[i][j] = dad.getRules()[i][j];
+						rules[i][j] = dad.getRules()[i][j];
 					}
 				}else{
 					if(!(mom.getRules().length<i)){
-					rules[i][j] = mom.getRules()[i][j];
+						rules[i][j] = mom.getRules()[i][j];
 					}
 				}
 
@@ -399,6 +392,10 @@ public class GAIBASM extends GA{
 		return bestSolution;
 	}
 
+	public ArrayList<RuleModelIBA> getPopulationSMIBA() {
+		return population;
+	}
+
 
 	@Deprecated
 	public RuleModel getBestSolution(){
@@ -417,10 +414,21 @@ public class GAIBASM extends GA{
 			iterateGeneration();
 			//			System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
 			bestSolution  = testGeneration();
-			if(bestSolution.getFitnessValue()==this.maxFitness){
+			if(bestSolution.getFitnessValue()==this.maxFitness&&!firstDone){
+				System.err.println("This thread is done." + bestSolution);
+				break;/**/
+			/*	
+				System.err.println("This thread is half done." + bestSolution);
+				firstDone = true;
+				intermediatSolutionIterations = i;
+				intermediatSolution = bestSolution.rulesToArray();
+				target = secondaryTarget;
+			}else if(bestSolution.getFitnessValue()==this.maxFitness&&firstDone){
 				System.err.println("This thread is done." + bestSolution);
 				break;
+				 /**/
 			}
+
 			//			System.out.println(population);
 			if(i%(100) == 0){
 				System.out.println("this thread is " + i + " out of " + maxIterations + "runs." ) ;
@@ -430,7 +438,7 @@ public class GAIBASM extends GA{
 
 		/*RuleModelIBA rm = testGeneration(); // seems to have caused a error.... i dont know why but best solution turns into a random solution.
 		bestSolution = rm;*/
-//		System.err.println("best solution: "  +rm.rulesToArray());
+		//		System.err.println("best solution: "  +rm.rulesToArray());
 		System.out.println("Done"+ " at: " + (new Date().getTime()- startTime.getTime()));
 		//		generator.resetBoard();
 		//		generator.setRules(rm.getRules());
@@ -441,12 +449,12 @@ public class GAIBASM extends GA{
 	public static class Scheduler {
 		static Date start = new Date();
 		static String filesuffix = ".txt";
-		static String file = "GAIBASM" + new SimpleDateFormat(" HHmm dd MM yyyy").format(new Date());
+		static String file = "GAIBASM" + new SimpleDateFormat(" yyyy MM dd HHmm ss").format(new Date());
 		static char tab = 9;
 		static int nrOfGA = 100;
 		static int MaxRunningGAAtTheTime = 3; //seems to work best when its equal to number of cores. or slight less. or even lower if you are running other things.
 		static ArrayList<GAIBASM> gaList = new ArrayList<GAIBASM>();
-		
+
 		static Thread [] tr = new Thread[nrOfGA];
 		static int k = 0;
 		public static void start(){
@@ -457,8 +465,9 @@ public class GAIBASM extends GA{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GAIBASM ga = new GAIBASM(50, 10000, 40, 2, 30, 2, true, 10);
-				ga.setTarget(ga.simpleStructureBorderd);
+				GAIBASM ga = new GAIBASM(50, 10000, 40, 2, 25, 4, true, 10);
+				ga.setTarget(ga.flagBorderd);
+//				ga.setSecondaryTarget(ga.Frenchflag);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -466,12 +475,12 @@ public class GAIBASM extends GA{
 			}else{
 				/* if a thread is still running, don't do nothing foo!*/
 				int living = 0;
-						for (int i = 0; i < tr.length; i++) {
-							if(tr[i].getState()!=Thread.State.TERMINATED){
-								//System.out.println(tr[i].getState());
-								living++;
-							}
-						}
+				for (int i = 0; i < tr.length; i++) {
+					if(tr[i].getState()!=Thread.State.TERMINATED){
+						//System.out.println(tr[i].getState());
+						living++;
+					}
+				}
 				if(living<=1){
 					endExperiment();
 				}
@@ -482,14 +491,14 @@ public class GAIBASM extends GA{
 			// finds the list with the biggest size.
 			int biggest = 0;
 			for (int i = 0; i < gaList.size(); i++){
-				if(gaList.get(i).getAvarageList().size()>biggest){
-					biggest = gaList.get(i).getAvarageList().size();
+				if(gaList.get(i).getBestList().size()>biggest){
+					biggest = gaList.get(i).getBestList().size();
 				}
 			}
 
 			// for docu
 			String line;
-			writer.writeline("Avarage");
+			/*writer.writeline("Avarage");
 			for (int i = 0; i < biggest; i++) {
 				line = "";
 				for (int j = 0; j < gaList.size(); j++) {
@@ -500,7 +509,7 @@ public class GAIBASM extends GA{
 					}
 				}
 				writer.writeline(line);
-			}
+			}*/
 			writer.writeline("Best");
 			for (int i = 0; i < biggest; i++) {
 				line = "";
@@ -513,6 +522,24 @@ public class GAIBASM extends GA{
 				}
 				writer.writeline(line);
 			}
+			/*
+			 * write the num. of generations to finish first half. 
+			 */
+			writer.writeline("generations to first finish");
+			line = "";
+			for (int j = 0; j < gaList.size(); j++) {
+				line+=  gaList.get(j).intermediatSolutionIterations+ "" + tab;
+			}
+			writer.writeline(line);
+			/*
+			 * rule at halfway. 
+			 */
+			writer.writeline("generations to first finish");
+			line = "";
+			for (int j = 0; j < gaList.size(); j++) {
+				line+=  gaList.get(j).intermediatSolution+ "" + tab;
+			}
+			writer.writeline(line);
 			/*
 			 * write the num. of generations to finish. 
 			 */

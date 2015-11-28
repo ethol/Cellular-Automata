@@ -102,6 +102,29 @@ public class GA implements Runnable{
 			{1,1,0,0,2,2},
 
 	};
+	
+	final int[][] norFlag = new int[][]{
+			{2,0,1,0,2,2},
+			{0,0,1,0,0,0},
+			{1,1,1,1,1,1},
+			{0,0,1,0,0,0},
+			{2,0,1,0,2,2},
+			{2,0,1,0,2,2},
+
+	};
+	
+	final int[][] norFlagBig = new int[][]{
+			{1,2,3,2,1,1,1},
+			{1,2,3,2,1,1,1},
+			{2,2,3,2,2,2,2},
+			{3,3,3,3,3,3,3},
+			{2,2,3,2,2,2,2},
+			{1,2,3,2,1,1,1},
+			{1,2,3,2,1,1,1},
+
+
+	};
+	
 	final int[][] simpleStructure = new int[][]{
 			{1,1,1,1,1},
 			{1,0,1,0,1},
@@ -185,6 +208,26 @@ public class GA implements Runnable{
 
 
 	};
+	final int[][] simple2StateStructureBorderd = new int[][]{
+			{0,0,0,0,0},
+			{0,2,2,2,0},
+			{0,2,1,2,0},
+			{0,2,2,2,0},
+			{0,0,0,0,0},
+
+
+	};
+	
+	final int[][] SimpleCheckersBorderd = new int[][]{
+			{0,0,0,0,0,0},
+			{0,2,2,1,1,0},
+			{0,2,2,1,1,0},
+			{0,1,1,2,2,0},
+			{0,1,2,2,2,0},
+			{0,0,0,0,0,0},
+
+
+	};
 	protected Date startTime = new Date();
 	protected double maxFitness; 
 	protected int popSize;
@@ -196,13 +239,18 @@ public class GA implements Runnable{
 	protected boolean elitism = false;
 	protected int [][] freshBoard;
 	protected int [][] target;
+	protected int [][] secondaryTarget;
+	protected boolean firstDone = false;
 	private CA generator;
 	private ArrayList<RuleModel> population;
+
 	public int numReplicated = 3;
 
 	protected ArrayList<Double> avarageList = new ArrayList<Double>();
 	protected ArrayList<Double> bestList = new ArrayList<Double>();
 	protected RuleModel bestSolution;
+	protected String intermediatSolution;
+	protected int intermediatSolutionIterations = 0;
 
 	public GA(int popSize, int maxIterations,int maxDevIterations, int dimentions, int boardSize,
 			int numOfStates, boolean elitism) {
@@ -246,8 +294,13 @@ public class GA implements Runnable{
 		int [][] dot = new int[1][1];
 		dot[0][0] = 1;
 		this.target = target;
-		generateReplicationBoard(dot);
-		this.maxFitness = target.length*target[0].length*numReplicated*2;
+		generateReplicationBoard(target);
+		this.maxFitness = target.length*target[0].length *numReplicated/*2/**/;
+	}
+	
+	public void setSecondaryTarget(int [][] target){
+		this.secondaryTarget = target;
+		//generateReplicationBoard(target);
 	}
 
 	private void run(int nrOfRuns){
@@ -274,7 +327,7 @@ public class GA implements Runnable{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(),numReplicated));
+			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -285,7 +338,7 @@ public class GA implements Runnable{
 		//		System.out.println("best: "+max);
 		bestList.add(max.getFitnessValue());
 		//		System.out.println("avarage: "+ avarage/popSize);
-		avarageList.add(avarage/popSize);
+		//avarageList.add(avarage/popSize);
 		return max;
 	}
 
@@ -346,7 +399,7 @@ public class GA implements Runnable{
 			int board[][] = generator.getBoard();
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[0].length; j++) {
-					if(board[i][j] ==flag[i][j]){
+					if(board[i][j] ==target[i][j]){
 						fitness++;
 					}
 				}
@@ -454,7 +507,7 @@ public class GA implements Runnable{
 		int [] bestPartialsRep = null;
 
 		generator.setBoard(freshBoard);
-		generator.start(bestDev);
+		generator.start(bestDev + 1);
 		for (int k = 0; k < (maxDevIterations/2); k++) {
 			
 			generator.start(1);
@@ -730,6 +783,9 @@ public class GA implements Runnable{
 		return ar.get(ar.size()-1);
 	}
 
+	public ArrayList<RuleModel> getPopulation() {
+		return population;
+	}
 
 
 
@@ -751,9 +807,19 @@ public class GA implements Runnable{
 			iterateGeneration();
 			//						System.out.println("test"+ " at: " + (new Date().getTime()- startTime.getTime()));
 			bestSolution  = testGeneration();
-			if(bestSolution.getFitnessValue()==this.maxFitness){
+			if(bestSolution.getFitnessValue()==this.maxFitness&&!firstDone){
 				System.err.println("This thread is done." + bestSolution);
 				break;
+				/*
+				System.err.println("This thread is half done." + bestSolution);
+				firstDone = true;
+				intermediatSolutionIterations = i;
+				intermediatSolution = bestSolution.rulesToBinary();
+				target = secondaryTarget;
+			}else if(bestSolution.getFitnessValue()==this.maxFitness&&firstDone){
+				System.err.println("This thread is done." + bestSolution);
+				break;
+				 /**/
 			}
 			//			System.out.println(population);
 			if(i%100 == 0){
@@ -797,8 +863,9 @@ public class GA implements Runnable{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GA ga = new GA(50, 10000, 40, 2, 25, 2, true);
-				ga.setTarget(ga.simpleSimpleStructureBorderd);
+				GA ga = new GA(50, 100000, 40, 2, 6, 3, true);
+				ga.setTarget(ga.norFlag);
+				//ga.setSecondaryTarget(ga.Frenchflag);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);
@@ -822,14 +889,14 @@ public class GA implements Runnable{
 			// finds the list with the biggest size.
 			int biggest = 0;
 			for (int i = 0; i < gaList.size(); i++){
-				if(gaList.get(i).getAvarageList().size()>biggest){
-					biggest = gaList.get(i).getAvarageList().size();
+				if(gaList.get(i).getBestList().size()>biggest){
+					biggest = gaList.get(i).getBestList().size();
 				}
 			}
 
 			// for docu
 			String line;
-			writer.writeline("Avarage");
+			/*writer.writeline("Avarage");
 			for (int i = 0; i < biggest; i++) {
 				line = "";
 				for (int j = 0; j < gaList.size(); j++) {
@@ -840,7 +907,7 @@ public class GA implements Runnable{
 					}
 				}
 				writer.writeline(line);
-			}
+			}*/
 			writer.writeline("Best");
 			for (int i = 0; i < biggest; i++) {
 				line = "";
@@ -853,6 +920,24 @@ public class GA implements Runnable{
 				}
 				writer.writeline(line);
 			}
+			/*
+			 * write the num. of generations to finish first half. 
+			 */
+			writer.writeline("generations to first finish");
+			line = "";
+			for (int j = 0; j < gaList.size(); j++) {
+				line+=  gaList.get(j).intermediatSolutionIterations+ "" + tab;
+			}
+			writer.writeline(line);
+			/*
+			 * rule at halfway. 
+			 */
+			writer.writeline("generations to first finish");
+			line = "";
+			for (int j = 0; j < gaList.size(); j++) {
+				line+=  gaList.get(j).intermediatSolution+ "" + tab;
+			}
+			writer.writeline(line);
 			/*
 			 * write the num. of generations to finish. 
 			 */

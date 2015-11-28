@@ -22,7 +22,9 @@ public class IBASMRuleSett extends IBARuleSett{
 		for (int i = 0; i < rules.length; i++) {
 			if(skipCounter<=0){
 				if(calculateSM(rules[i][0], rules[i][1], rules[i][2])){ //makes strong assumptions of rules array.)
-					toDo.add(rules[i]);
+					if(preformSM){
+						toDo.add(rules[i]);
+					}
 				}
 				//				System.out.println("noSkip");
 			}else{
@@ -123,9 +125,19 @@ public class IBASMRuleSett extends IBARuleSett{
 			rules = new byte [maxInstructionLength][5];
 		}
 		//		System.out.println(nextIns.size());
+		//System.out.println("NEXT!!");
 		for (int i = 0; i < rules.length; i++) {
 			rules[i] = nextIns.get(i);
+			/*System.out.print("{");
+			System.out.print(nextIns.get(i)[0]+ ",");
+			System.out.print(nextIns.get(i)[1]+ ",");
+			System.out.print(nextIns.get(i)[2]+ ",");
+			System.out.print(nextIns.get(i)[3]+ ",");
+			System.out.print(nextIns.get(i)[4]+ ",");
+			System.out.print("},");/**/
+
 		}
+		//System.out.println();
 
 		//		System.out.println("next dev");
 		//		printRules();
@@ -144,6 +156,16 @@ public class IBASMRuleSett extends IBARuleSett{
 	}
 	public void preformSMNext(){
 		preformSM = true;
+	}
+	private void PrintToDo(){
+		System.out.println("ToDo:");
+		for (byte [] i : toDo) {
+			System.out.print("{");
+			for (byte b : i) {
+				System.out.print(b + ",");
+			}
+			System.out.println("},");
+		}
 	}
 	public byte[][] getRules(){
 		return rules;

@@ -72,21 +72,25 @@ public class runIBA {
 
 };
 	
+	final static int[][] creeperRep = new int[][]{
+			{2,2,2,2,2,2,2,2},
+			{2,1,1,2,2,1,1,2},
+			{2,1,1,2,2,1,1,2},
+			{2,2,2,1,1,2,2,2},
+			{2,2,1,1,1,1,2,2},
+			{2,2,1,1,1,1,2,2},
+			{2,2,1,2,2,1,2,2},
+			{2,2,2,2,2,2,2,2},
+	};
+	
+	final static int[][] dot = new int[][]{
+			{1},
+		};
+	
 
-	final static int[][] test = new int[][]{
-		{2,0,1,},{14,0,1,},{1,1,1,},{2,1,0,},{12,4,1,},{5,1,4,},{6,2,2,},{13,3,0,},{14,1,4,},{7,1,0,},
-		
+	final static byte[][] test = new byte[][]{
 
-
-
-
-
-
-
-
-
-
-
+		{11,2,1,},{8,1,2,},{9,1,2,},{15,0,4,},{2,2,4,},{13,0,0,},{0,0,0,},{8,0,1,},{4,3,4,},{12,0,1,},		
 		//{8,0,1,},{2,2,0,},{6,4,3,},{0,4,1,},{13,2,1,},{11,0,3,},{4,2,1,},{11,4,1,},{2,1,3,},{1,1,0,},
 
 //		{2,2,0,},{14,2,3,},{4,0,3,},{5,4,3,},{12,0,1,},{12,2,3,},{1,1,0,},{8,1,3,},{2,1,4,},{8,0,1,},
@@ -119,15 +123,15 @@ public class runIBA {
 	public static void main(String[] args) {
 		/*  Initialize variables */ 
 		int dimentions = 2; 
-		int boardSize = 30;
+		int boardSize = 6;
 		int numOfStates = 4;
-		int numberOfRuns =40;
+		int numberOfRuns =80;
 		int numberofInstructions = 10;
 		boolean randomStart = false;
 		boolean vonNeumannNeighbourhood = true;
 
 		CAIBA ca = new CAIBA(dimentions, boardSize, numOfStates, randomStart, numberofInstructions);
-		ca.setBoard(generateReplicationBoard(norFlagExtraLargeBordered));
+		ca.setBoard(generateReplicationBoard(dot));
 		ca.useWriter();
 		ca.setRules(test);
 		ca.start(numberOfRuns);
@@ -136,7 +140,7 @@ public class runIBA {
 	}
 	
 	private static int [][] generateReplicationBoard(int [][] replicator){
-		int s = 30;
+		int s = 6;
 		int x = (s/2) - (replicator.length/2);
 		int y = (s/2) - (replicator[0].length /2);
 
