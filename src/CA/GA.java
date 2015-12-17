@@ -294,8 +294,8 @@ public class GA implements Runnable{
 		int [][] dot = new int[1][1];
 		dot[0][0] = 1;
 		this.target = target;
-		generateReplicationBoard(target);
-		this.maxFitness = target.length*target[0].length *numReplicated/*2/**/;
+		generateReplicationBoard(dot);
+		this.maxFitness = target.length*target[0].length *numReplicated*2/**/;
 	}
 	
 	public void setSecondaryTarget(int [][] target){
@@ -327,7 +327,7 @@ public class GA implements Runnable{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
+			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(),numReplicated));
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -863,8 +863,8 @@ public class GA implements Runnable{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GA ga = new GA(50, 100000, 40, 2, 6, 3, true);
-				ga.setTarget(ga.norFlag);
+				GA ga = new GA(50, 10000, 40, 2, 30, 4, true);
+				ga.setTarget(ga.flagBorderd);
 				//ga.setSecondaryTarget(ga.Frenchflag);
 				tr[k] = new Thread(ga);
 				tr[k].start();

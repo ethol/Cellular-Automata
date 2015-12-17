@@ -49,7 +49,7 @@ public class GAIBA extends GA{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(), numReplicated));
+			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules()/**/, numReplicated/**/));
 			if(rm.getFitnessValue()>=max.getFitnessValue()){
 				max=rm;
 			}
@@ -476,8 +476,8 @@ public class GAIBA extends GA{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GAIBA ga = new GAIBA(50, 10000,40, 2, 30, 3, true, 10);
-				ga.setTarget(ga.frenchFlagBorderd);
+				GAIBA ga = new GAIBA(50, 10000,40, 2, 30, 4, true, 10);
+				ga.setTarget(ga.flagBorderd);
 				tr[k] = new Thread(ga);
 				tr[k].start();
 				gaList.add(ga);

@@ -48,7 +48,7 @@ public class GAIBASM extends GA{
 			//			System.out.println("pop" + i + " at: " + (new Date().getTime()- startTime.getTime()));
 			rm = population.get(i);
 			//			System.out.println("nr " + i + ": "  + rm);
-			rm.setFitnessValue(replicationFitnessFunction(rm.getRules(), numReplicated));
+			rm.setFitnessValue(evoDevoFitnessFunction(rm.getRules(), numReplicated));
 			//			double initial = rm.getFitnessValue();
 			//			rm.setFitnessValue(pixelFitnessFunction(rm.getRules()));
 			//			if(initial != rm.getFitnessValue()){
@@ -465,7 +465,7 @@ public class GAIBASM extends GA{
 		public static void startAThread(){
 			if(k<nrOfGA){
 				System.out.println("trail nr:" + k);
-				GAIBASM ga = new GAIBASM(50, 10000, 40, 2, 25, 4, true, 10);
+				GAIBASM ga = new GAIBASM(50, 10000, 40, 2, 30, 4, true, 10);
 				ga.setTarget(ga.flagBorderd);
 //				ga.setSecondaryTarget(ga.Frenchflag);
 				tr[k] = new Thread(ga);
@@ -525,7 +525,7 @@ public class GAIBASM extends GA{
 			/*
 			 * write the num. of generations to finish first half. 
 			 */
-			writer.writeline("generations to first finish");
+			/*writer.writeline("generations to first finish");
 			line = "";
 			for (int j = 0; j < gaList.size(); j++) {
 				line+=  gaList.get(j).intermediatSolutionIterations+ "" + tab;
@@ -534,7 +534,7 @@ public class GAIBASM extends GA{
 			/*
 			 * rule at halfway. 
 			 */
-			writer.writeline("generations to first finish");
+			/*writer.writeline("generations to first finish");
 			line = "";
 			for (int j = 0; j < gaList.size(); j++) {
 				line+=  gaList.get(j).intermediatSolution+ "" + tab;

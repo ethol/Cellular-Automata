@@ -255,7 +255,7 @@ public class GUI extends JFrame implements KeyListener{
 		if(((e.getModifiersEx()  | e.getModifiers())==SAVEAllIMG.getModifiers()&&/**/(e.getKeyCode()==SAVEAllIMG.getKeyCode()))){
 			pointer = 0;
 			update();
-			String name = "glidergun";
+			String name = "FlagEvoDevo";
 			printImg(name);
 			for (int i = 0; i < iterations.size()-1; i++) {
 				next.doClick();
